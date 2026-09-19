@@ -20,16 +20,17 @@ export const experiences: ExperienceItem[] = [
   {
     company: "Tatum Games",
     role: "Software Development Intern",
-    date: "Jul 2026 – Present",
+    date: "Jul 2026 – Sept 2026",
     location: "Remote",
     description:
       "Contributed to the MIKROS ecosystem through web development, technical documentation, research, and platform integration.",
     responsibilities: [
       "Developed and updated PHP and CodeIgniter documentation pages.",
       "Worked with Git, GitHub, APIs, databases, and local XAMPP environments.",
-      "Created technical documentation for MIKROS Bots and MIKROS MCP.",
+      "Created technical documentation for MIKROS' ecosystem",
+      "Used Jira to effectively plan and execute tasks in a team setting",
     ],
-    technologies: ["PHP", "CodeIgniter", "Git", "MySQL", "JavaScript", "Jira"],
+    technologies: ["Frontend", "Jira", "CodeIgniter", "Git", "JavaScript"],
     photos: ["/images/experience/tatumgames/tatumgamesweb.png"],
     video: "",
     links: [

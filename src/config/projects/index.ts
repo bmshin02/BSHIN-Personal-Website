@@ -5,6 +5,7 @@ import { fishgame } from "./fishgame";
 import { rhythmplus } from "./RhythmPlus";
 import { AutonomousCar } from "./CrispCar";
 import { EnigmaMachine } from "./enigmamachine";
+import { productintelligence } from "./productintelligence";
 
 export type { Project, ProjectLink, ProjectStatus } from "./projecttypes";
 
@@ -16,6 +17,7 @@ export const projects = [
   Webmining,
   fishgame,
   rhythmplus,
+  productintelligence,
 ];
 
 export const projectCategories = [

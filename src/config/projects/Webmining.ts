@@ -29,7 +29,7 @@ export const Webmining: Project = {
 
   technologies: ["Roblox Studio", "Game Systems", "UI Development", "Luau"],
 
-  featured: true,
+  featured: false,
 
   role: "I worked as a solo game developer responsible for designing and programming the mining mechanics, resource systems, player progression, upgrades, weather events, art, animations, and user interface in Roblox Studio.",
 

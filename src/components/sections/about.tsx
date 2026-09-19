@@ -16,7 +16,7 @@ function About() {
             {/* Profile image */}
             <div className="mx-auto w-44 md:mx-0 md:w-full">
               <img
-                src="/images/profile.png"
+                src="/images/profile2.png"
                 alt="Brandon Shin"
                 className="
                   aspect-square w-full object-cover
@@ -41,8 +41,9 @@ function About() {
 
               <div className="space-y-4 leading-7 text-muted">
                 <p>
-                  I am a computer science graduate from UC Riverside and an
-                  incoming Master of Software Engineering student at UC Irvine.
+                  I am a computer science graduate from UC Riverside and
+                  currently a Master of Software Engineering student at UC
+                  Irvine.
                 </p>
 
                 <p>

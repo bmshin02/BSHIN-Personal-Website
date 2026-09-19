@@ -8,17 +8,7 @@ type SkillGroup = {
 const skillGroups: SkillGroup[] = [
   {
     title: "Languages",
-    skills: [
-      "TypeScript",
-      "JavaScript",
-      "Python",
-      "C#",
-      "C++",
-      "Java",
-      "PHP",
-      "SQL",
-      "Luau",
-    ],
+    skills: ["Python", "TypeScript", "C#", "C++", "Java", "PHP", "SQL", "Luau"],
   },
   {
     title: "Web & Backend",
@@ -41,20 +31,18 @@ const skillGroups: SkillGroup[] = [
       "iOS",
       "Game Systems",
       "UI Development",
-      "Dialogue Systems",
     ],
   },
   {
     title: "Tools, Data & Media",
     skills: [
-      "Git",
       "GitHub",
       "Jira",
-      "Agile",
       "VS Code",
       "OpenCV",
-      "XAMPP",
       "Cloudflare Pages",
+      "Vercel",
+      "Render",
     ],
   },
 ];

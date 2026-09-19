@@ -17,15 +17,15 @@ const education: EducationItem[] = [
     degree: "Master of Software Engineering",
     date: "2026 – Expected 2027",
     location: "Irvine, California",
-    status: "Incoming Student",
+    status: "Current Student",
     description:
       "Graduate program focused on professional software development, team-based engineering, software architecture, testing, and large-scale application development.",
     highlights: [
       "Recipient of a $20,000 student fellowship.",
       "Participating in a studio-based curriculum centered on collaborative software development.",
-      "Preparing for a team capstone involving the design and delivery of a production-level software system.",
+      "Preparing for a Summer 2027 internship involving the design and delivery of a production-level software system.",
     ],
-    coursework: ["Software Engineering"],
+    coursework: ["Software Engineering", "AI"],
   },
   {
     school: "University of California, Riverside",
