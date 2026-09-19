@@ -12,13 +12,13 @@ export type SocialLink = {
 export const socialLinks: SocialLink[] = [
   {
     label: "GitHub",
-    href: "https://github.com/Zelocity",
+    href: "https://github.com/bmshin02",
     icon: FaGithub,
     external: true,
   },
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/brandon-shin-z/",
+    href: "https://www.linkedin.com/in/bmshin02/",
     icon: FaLinkedin,
     external: true,
   },

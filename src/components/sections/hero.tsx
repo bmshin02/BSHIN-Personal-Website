@@ -216,7 +216,7 @@ function Hero() {
                   />
 
                   <p className="text-xs font-bold text-ink sm:text-sm">
-                    Incoming UC Irvine MSWE student
+                    UC Irvine Master of SWE student
                   </p>
                 </div>
               </div>
