@@ -77,7 +77,7 @@ export const rankingVideoCompiler: Project = {
     "Integrated frontend controls with a Python and FFmpeg media-processing pipeline",
   ],
 
-  youtubeUrl: "",
+  youtubeUrl: "https://www.youtube.com/embed/vo7Qgxa4z7k?si=WZRtjqmqPQ0Eku4j",
 
   links: [
     {
