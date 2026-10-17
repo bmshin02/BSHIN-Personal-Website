@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type Ref,
+} from "react";
 
 import { projectCategories, projects } from "../../data/projects";
 
@@ -12,13 +18,18 @@ import ProjectPanel from "../ui/ProjectPanel";
 
 type ProjectsView = "featured" | "all";
 
+export type ProjectsHandle = {
+  closeCaseStudy: () => void;
+};
+
 type ProjectsProps = {
+  ref?: Ref<ProjectsHandle>;
   onCaseStudyChange?: (isOpen: boolean) => void;
 };
 
 const slideDuration = 700;
 
-function Projects({ onCaseStudyChange }: ProjectsProps) {
+function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
   const [projectsView, setProjectsView] = useState<ProjectsView>("featured");
 
   const [activeCategory, setActiveCategory] = useState("All");
@@ -149,6 +160,14 @@ function Projects({ onCaseStudyChange }: ProjectsProps) {
       closeTimeoutRef.current = null;
     }, slideDuration);
   };
+
+  /*
+   * Lets the page close the case study, for example
+   * when a header link is clicked.
+   */
+  useImperativeHandle(ref, () => ({
+    closeCaseStudy: handleCloseProject,
+  }));
 
   return (
     <section

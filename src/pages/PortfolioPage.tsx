@@ -9,7 +9,9 @@ import About from "../components/sections/About";
 import Education from "../components/sections/Education";
 import Experience from "../components/sections/Experience";
 import Skills from "../components/sections/Skills";
-import Projects from "../components/sections/Projects";
+import Projects, {
+  type ProjectsHandle,
+} from "../components/sections/Projects";
 import Contact from "../components/sections/Contact";
 
 function PortfolioPage() {
@@ -17,18 +19,35 @@ function PortfolioPage() {
 
   const wasCaseStudyOpenRef = useRef(false);
 
+  const projectsRef = useRef<ProjectsHandle>(null);
+
+  /*
+   * Section to show once the case study closes.
+   * Header links can change it; otherwise it is Projects.
+   */
+  const returnSectionIdRef = useRef("projects");
+
+  const handleCaseStudyExit = (sectionId: string) => {
+    returnSectionIdRef.current = sectionId;
+    projectsRef.current?.closeCaseStudy();
+  };
+
   /*
    * When the case study closes, the hidden homepage
-   * sections return. Move directly to Projects before
-   * the browser paints the restored page.
+   * sections return. Move directly to the return section
+   * before the browser paints the restored page.
    */
   useLayoutEffect(() => {
     const wasCaseStudyOpen = wasCaseStudyOpenRef.current;
 
     if (wasCaseStudyOpen && !isProjectCaseStudyOpen) {
-      const projectsSection = document.getElementById("projects");
+      const returnSection = document.getElementById(
+        returnSectionIdRef.current,
+      );
 
-      if (projectsSection) {
+      returnSectionIdRef.current = "projects";
+
+      if (returnSection) {
         const htmlElement = document.documentElement;
 
         const previousScrollBehavior = htmlElement.style.scrollBehavior;
@@ -41,13 +60,19 @@ function PortfolioPage() {
 
         const headerHeight = 64;
 
-        const projectTop =
-          projectsSection.getBoundingClientRect().top +
-          window.scrollY -
-          headerHeight;
+        /*
+         * Home is the top of the page. Measuring it here
+         * would include its fade-in offset.
+         */
+        const returnSectionTop =
+          returnSection.id === "home"
+            ? 0
+            : returnSection.getBoundingClientRect().top +
+              window.scrollY -
+              headerHeight;
 
         window.scrollTo({
-          top: projectTop,
+          top: returnSectionTop,
           left: 0,
           behavior: "auto",
         });
@@ -81,6 +106,7 @@ function PortfolioPage() {
         <Header
           forcedActiveHref={isProjectCaseStudyOpen ? "#projects" : null}
           caseStudyOpen={isProjectCaseStudyOpen}
+          onCaseStudyExit={handleCaseStudyExit}
         />
 
         <main className="pt-16">
@@ -96,7 +122,10 @@ function PortfolioPage() {
             </>
           )}
 
-          <Projects onCaseStudyChange={setIsProjectCaseStudyOpen} />
+          <Projects
+            ref={projectsRef}
+            onCaseStudyChange={setIsProjectCaseStudyOpen}
+          />
 
           {!isProjectCaseStudyOpen && <Contact />}
         </main>

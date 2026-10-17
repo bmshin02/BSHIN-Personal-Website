@@ -12,6 +12,7 @@ type NavigationLink = {
 type HeaderProps = {
   forcedActiveHref?: string | null;
   caseStudyOpen?: boolean;
+  onCaseStudyExit?: (sectionId: string) => void;
 };
 
 const navigationLinks: NavigationLink[] = [
@@ -28,6 +29,7 @@ const sectionHrefs = ["#home", ...navigationLinks.map((link) => link.href)];
 function Header({
   forcedActiveHref = null,
   caseStudyOpen = false,
+  onCaseStudyExit,
 }: HeaderProps) {
   const [activeHref, setActiveHref] = useState("#home");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -200,6 +202,17 @@ function Header({
     href: string,
   ) => {
     event.preventDefault();
+
+    /*
+     * The other sections are hidden while a case study
+     * is open, so let the page close it and scroll.
+     */
+    if (caseStudyOpen && onCaseStudyExit) {
+      setMenuOpen(false);
+      window.history.replaceState(null, "", href);
+      onCaseStudyExit(href.slice(1));
+      return;
+    }
 
     const section = document.getElementById(href.slice(1));
 
