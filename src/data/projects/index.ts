@@ -6,10 +6,12 @@ import { rhythmPlus } from "./rhythmPlus";
 import { crispCar } from "./crispCar";
 import { enigmaMachine } from "./enigmaMachine";
 import { productIntelligence } from "./productIntelligence";
+import { talentBridge } from "./talentBridge";
 
 export type { Project, ProjectLink, ProjectStatus } from "./types";
 
 export const projects = [
+  talentBridge,
   rankingVideoCompiler,
   enigmaMachine,
   crispCar,

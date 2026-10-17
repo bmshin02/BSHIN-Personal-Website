@@ -49,18 +49,31 @@ function ProjectArchiveRow({
           sm:p-5
         "
       >
-        <img
-          src={project.image}
-          alt=""
-          loading="lazy"
-          className="
-            hidden h-16 w-24 shrink-0
-            border-2 border-frame
-            bg-panel object-cover
-            shadow-[2px_2px_0_var(--theme-shadow)]
-            sm:block
-          "
-        />
+        {project.image ? (
+          <img
+            src={project.image}
+            alt=""
+            loading="lazy"
+            className="
+              hidden h-16 w-24 shrink-0
+              border-2 border-frame
+              bg-panel object-cover
+              shadow-[2px_2px_0_var(--theme-shadow)]
+              sm:block
+            "
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            className="
+              hidden h-16 w-24 shrink-0
+              border-2 border-frame
+              bg-panel
+              shadow-[2px_2px_0_var(--theme-shadow)]
+              sm:block
+            "
+          />
+        )}
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">

@@ -34,16 +34,20 @@ function FeaturedProjectCard({
             shadow-[3px_3px_0_var(--theme-shadow)]
           "
         >
-          <img
-            src={project.image}
-            alt={project.imageAlt}
-            loading="lazy"
-            className="
-              aspect-video w-full object-cover
-              transition-transform duration-300
-              group-hover:scale-[1.03]
-            "
-          />
+          {project.image ? (
+            <img
+              src={project.image}
+              alt={project.imageAlt}
+              loading="lazy"
+              className="
+                aspect-video w-full object-cover
+                transition-transform duration-300
+                group-hover:scale-[1.03]
+              "
+            />
+          ) : (
+            <div aria-hidden="true" className="aspect-video w-full" />
+          )}
 
           <div className="absolute right-2 top-2">
             <ProjectStatusBadge status={project.status} compact />
