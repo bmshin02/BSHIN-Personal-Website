@@ -1,18 +1,18 @@
 import { useLayoutEffect, useRef, useState } from "react";
 
-import Header from "../components/layout/header";
-import Background from "../components/layout/background";
-import SectionFadeManager from "../components/ui/sectionfademanager";
+import Header from "../components/layout/Header";
+import Background from "../components/layout/Background";
+import SectionFadeManager from "../components/ui/SectionFadeManager";
 
-import Hero from "../components/sections/hero";
-import About from "../components/sections/about";
-import Education from "../components/sections/education";
-import Experience from "../components/sections/experience";
-import Skills from "../components/sections/skills";
-import Projects from "../components/sections/projects";
-import Contact from "../components/sections/contact";
+import Hero from "../components/sections/Hero";
+import About from "../components/sections/About";
+import Education from "../components/sections/Education";
+import Experience from "../components/sections/Experience";
+import Skills from "../components/sections/Skills";
+import Projects from "../components/sections/Projects";
+import Contact from "../components/sections/Contact";
 
-function HomePage() {
+function PortfolioPage() {
   const [isProjectCaseStudyOpen, setIsProjectCaseStudyOpen] = useState(false);
 
   const wasCaseStudyOpenRef = useRef(false);
@@ -105,4 +105,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default PortfolioPage;
