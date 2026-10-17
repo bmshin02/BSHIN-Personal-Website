@@ -2,18 +2,12 @@ import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
+/*
+ * The inline script in index.html picks the theme
+ * before first paint, so start from what it applied.
+ */
 function getInitialTheme(): Theme {
-  const savedTheme = localStorage.getItem("theme");
-
-  if (savedTheme === "light" || savedTheme === "dark") {
-    return savedTheme;
-  }
-
-  const prefersDarkMode = window.matchMedia(
-    "(prefers-color-scheme: dark)",
-  ).matches;
-
-  return prefersDarkMode ? "dark" : "light";
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
 function ThemeToggle() {
