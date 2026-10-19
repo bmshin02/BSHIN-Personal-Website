@@ -7,10 +7,12 @@ import { crispCar } from "./crispCar";
 import { enigmaMachine } from "./enigmaMachine";
 import { productIntelligence } from "./productIntelligence";
 import { talentBridge } from "./talentBridge";
+import { signLingo } from "./signLingo";
 
 export type { Project, ProjectLink, ProjectStatus } from "./types";
 
 export const projects = [
+  signLingo,
   talentBridge,
   rankingVideoCompiler,
   enigmaMachine,
