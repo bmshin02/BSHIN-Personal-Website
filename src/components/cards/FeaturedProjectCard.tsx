@@ -50,24 +50,27 @@ function FeaturedProjectCard({
             <div aria-hidden="true" className="aspect-video w-full" />
           )}
 
-          <div className="absolute right-2 top-2 flex gap-1">
-            {project.winner && <WinnerBadge compact />}
+          <div className="absolute right-2 top-2">
             <ProjectStatusBadge status={project.status} compact />
           </div>
         </div>
 
-        {/* Category and date */}
+        {/* Category, winner, and date */}
         <div className="mt-4 flex min-h-6 flex-wrap items-center justify-between gap-2">
-          <span
-            className="
-              border border-frame
-              bg-panel px-2 py-1
-              text-[9px] font-bold uppercase
-              tracking-wide text-muted
-            "
-          >
-            {project.category}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className="
+                border border-frame
+                bg-panel px-2 py-1
+                text-[9px] font-bold uppercase
+                tracking-wide text-muted
+              "
+            >
+              {project.category}
+            </span>
+
+            {project.winner && <WinnerBadge />}
+          </div>
 
           <span
             className="

@@ -7,7 +7,7 @@ export const signLingo: Project = {
   title: "SignLingo (ZotHack 2026)",
 
   shortDescription:
-    "A Mac app that teaches ASL fingerspelling with your webcam, and the Best Overall winner at ZotHack 2026.",
+    "A Mac app that teaches ASL fingerspelling with live feedback from your webcam.",
 
   description:
     "SignLingo is a Mac app that helps you learn ASL fingerspelling with your webcam. " +
@@ -20,6 +20,7 @@ export const signLingo: Project = {
     "The SignLingo team and their mentor holding the headphones they won at ZotHack 2026",
 
   gallery: [
+    "/images/projects/signlingo/pic4.png",
     "/images/projects/signlingo/pic1.jpg",
     "/images/projects/signlingo/pic2.jpg",
     "/images/projects/signlingo/pic3.png",
@@ -82,11 +83,11 @@ export const signLingo: Project = {
 
   links: [
     {
-      label: "View on Devpost",
+      label: "Devpost",
       url: "https://devpost.com/software/signlingo-l79ict",
     },
     {
-      label: "View on GitHub",
+      label: "GitHub",
       url: "https://github.com/karenhuang314/sign-language-cv",
     },
   ],
