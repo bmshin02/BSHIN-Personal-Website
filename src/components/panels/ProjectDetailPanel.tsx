@@ -3,6 +3,7 @@ import type { Project } from "../../data/projects";
 import ExternalProjectLinks from "../ui/ExternalProjectLinks";
 import PixelPanel from "../ui/PixelPanel";
 import ProjectStatusBadge from "../ui/ProjectStatusBadge";
+import WinnerBadge from "../ui/WinnerBadge";
 import TechnologyTags from "../ui/TechnologyTags";
 
 import ProjectInsightsPanel from "./ProjectInsightsPanel";
@@ -101,6 +102,8 @@ function ProjectDetailPanel({ project, onBack }: ProjectDetailPanelProps) {
                 )}
 
                 <ProjectStatusBadge status={project.status} />
+
+                {project.winner && <WinnerBadge />}
 
                 <span className="text-xs font-bold uppercase tracking-wide text-accent">
                   {project.date}

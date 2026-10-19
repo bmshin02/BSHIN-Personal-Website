@@ -39,7 +39,7 @@ export const productIntelligence: Project = {
     "Render",
   ],
 
-  featured: true,
+  featured: false,
 
   role: "I designed and developed the full-stack application, including the React dashboard, FastAPI backend, text-processing pipeline, REST API integration, automated tests, and cloud deployment. I am also responsible for planning and implementing the project's incremental NLP and AI feature roadmap.",
 

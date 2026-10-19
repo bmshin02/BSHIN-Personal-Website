@@ -3,6 +3,7 @@ import type { Project } from "../../data/projects";
 import ExternalProjectLinks from "../ui/ExternalProjectLinks";
 import ProjectPanel from "../ui/ProjectPanel";
 import ProjectStatusBadge from "../ui/ProjectStatusBadge";
+import WinnerBadge from "../ui/WinnerBadge";
 import TechnologyTags from "../ui/TechnologyTags";
 
 type ProjectArchiveRowProps = {
@@ -86,6 +87,8 @@ function ProjectArchiveRow({
             </span>
 
             <ProjectStatusBadge status={project.status} compact />
+
+            {project.winner && <WinnerBadge compact />}
           </div>
 
           <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-accent">

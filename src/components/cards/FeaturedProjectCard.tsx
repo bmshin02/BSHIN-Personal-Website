@@ -3,6 +3,7 @@ import type { Project } from "../../data/projects";
 import ExternalProjectLinks from "../ui/ExternalProjectLinks";
 import ProjectPanel from "../ui/ProjectPanel";
 import ProjectStatusBadge from "../ui/ProjectStatusBadge";
+import WinnerBadge from "../ui/WinnerBadge";
 import TechnologyTags from "../ui/TechnologyTags";
 
 type FeaturedProjectCardProps = {
@@ -49,7 +50,8 @@ function FeaturedProjectCard({
             <div aria-hidden="true" className="aspect-video w-full" />
           )}
 
-          <div className="absolute right-2 top-2">
+          <div className="absolute right-2 top-2 flex gap-1">
+            {project.winner && <WinnerBadge compact />}
             <ProjectStatusBadge status={project.status} compact />
           </div>
         </div>

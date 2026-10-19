@@ -26,7 +26,7 @@ export const rankingVideoCompiler: Project = {
 
   category: "Web",
 
-  date: "Jun. 2026 – Present",
+  date: "Jun. 2026 – Sep. 2026",
 
   status: "completed",
 

@@ -23,6 +23,7 @@ export type Project = {
 
   technologies: string[];
   featured: boolean;
+  winner?: boolean;
 
   role: string;
   problem: string;

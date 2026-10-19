@@ -40,7 +40,9 @@ export const signLingo: Project = {
     "GitHub",
   ],
 
-  featured: false,
+  featured: true,
+
+  winner: true,
 
   role: "Mentor. I mentored Karen Huang, Etinosa Ogbeide, and Jeffrey Song through the 12-hour build, from planning and code review to judging prep and the Mac app release.",
 
