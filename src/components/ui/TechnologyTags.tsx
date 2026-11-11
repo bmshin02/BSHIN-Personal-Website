@@ -16,9 +16,11 @@ function TechnologyTags({ technologies, limit }: TechnologyTagsProps) {
         <span
           key={technology}
           className="
-            border border-frame
-            bg-panel px-2 py-1
+            rounded-md border border-accent/25
+            bg-accent/8 px-2 py-1
             text-[10px] font-bold text-ink
+            tag-pop
+            hover:bg-accent/15
           "
         >
           {technology}

@@ -5,6 +5,7 @@ import {
   useState,
   type Ref,
 } from "react";
+import { LuArrowDown } from "react-icons/lu";
 
 import { projectCategories, projects } from "../../data/projects";
 
@@ -13,7 +14,7 @@ import type { Project } from "../../data/projects";
 import FeaturedProjectCard from "../cards/FeaturedProjectCard";
 import ProjectArchiveRow from "../cards/ProjectArchiveRow";
 import ProjectDetailPanel from "../panels/ProjectDetailPanel";
-import PixelPanel from "../ui/PixelPanel";
+import Panel from "../ui/Panel";
 import ProjectPanel from "../ui/ProjectPanel";
 
 type ProjectsView = "featured" | "all";
@@ -178,6 +179,7 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
           ? {
               opacity: 1,
               transform: "none",
+              filter: "none",
             }
           : undefined
       }
@@ -218,12 +220,12 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
             <div className="mx-auto max-w-7xl">
               {/* Heading */}
               <div className="grid grid-cols-12 gap-8">
-                <PixelPanel
+                <Panel
                   className="col-span-12 lg:col-start-3 lg:col-span-8"
                   contentClassName="p-5 sm:p-6"
                 >
                   <header>
-                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-accent sm:text-sm">
+                    <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.25em] text-accent before:h-0.5 before:w-6 before:rounded-full before:bg-accent sm:text-sm">
                       Projects
                     </p>
 
@@ -248,12 +250,11 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                           onClick={() => handleViewChange("featured")}
                           aria-pressed={projectsView === "featured"}
                           className={`
-                      border-2 border-frame
+                      rounded-lg border border-frame/20
                       px-3 py-1.5
                       text-xs font-bold
-                      shadow-[2px_2px_0_var(--theme-shadow)]
+                      shadow-soft-sm
                       transition duration-150
-                      hover:-translate-x-0.5
                       hover:-translate-y-0.5
                       focus-visible:outline-none
                       focus-visible:ring-4
@@ -273,12 +274,11 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                           onClick={() => handleViewChange("all")}
                           aria-pressed={projectsView === "all"}
                           className={`
-                      border-2 border-frame
+                      rounded-lg border border-frame/20
                       px-3 py-1.5
                       text-xs font-bold
-                      shadow-[2px_2px_0_var(--theme-shadow)]
+                      shadow-soft-sm
                       transition duration-150
-                      hover:-translate-x-0.5
                       hover:-translate-y-0.5
                       focus-visible:outline-none
                       focus-visible:ring-4
@@ -295,7 +295,7 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                       </div>
                     </div>
 
-                    <div className="mt-5 border-t-2 border-dashed border-divider/50" />
+                    <div className="mt-5 h-px bg-linear-to-r from-accent/60 via-divider/25 to-transparent" />
 
                     {projectsView === "all" && (
                       <div className="mt-5">
@@ -310,12 +310,11 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                                 onClick={() => handleCategoryChange(category)}
                                 aria-pressed={isActive}
                                 className={`
-                            border-2 border-frame
+                            rounded-lg border border-frame/20
                             px-3 py-1.5
                             text-xs font-bold
-                            shadow-[2px_2px_0_var(--theme-shadow)]
+                            shadow-soft-sm
                             transition duration-150
-                            hover:-translate-x-0.5
                             hover:-translate-y-0.5
                             ${
                               isActive
@@ -339,7 +338,7 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                       </div>
                     )}
                   </header>
-                </PixelPanel>
+                </Panel>
               </div>
 
               {/* Featured projects */}
@@ -379,21 +378,34 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                       type="button"
                       onClick={() => handleViewChange("all")}
                       className="
-                  border-2 border-frame
-                  bg-accent px-5 py-2.5
-                  text-sm font-bold text-accent-text
-                  shadow-[4px_4px_0_var(--theme-shadow)]
+                  group/browse
+                  inline-flex items-center gap-2
+                  rounded-xl border border-frame/20
+                  bg-panel-secondary px-5 py-2.5
+                  text-sm font-bold text-ink
+                  shadow-soft
                   transition duration-150
-                  hover:-translate-x-0.5
                   hover:-translate-y-0.5
-                  hover:bg-accent-hover
-                  hover:shadow-[6px_6px_0_var(--theme-shadow)]
-                  active:translate-x-1
-                  active:translate-y-1
-                  active:shadow-none
+                  hover:border-accent/40
+                  hover:bg-panel-highlight
+                  hover:text-accent
+                  hover:shadow-soft-lg
+                  focus-visible:outline-none
+                  focus-visible:ring-4
+                  focus-visible:ring-accent/40
+                  active:translate-y-px
+                  active:shadow-soft-sm
                 "
                     >
-                      Browse all projects ↓
+                      Browse all projects
+                      <LuArrowDown
+                        aria-hidden="true"
+                        className="
+                          h-4 w-4 text-accent
+                          transition-transform duration-200
+                          group-hover/browse:translate-y-0.5
+                        "
+                      />
                     </button>
                   </div>
                 </>
@@ -430,18 +442,16 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                       type="button"
                       onClick={() => handleViewChange("featured")}
                       className="
-                  border-2 border-frame
+                  rounded-lg border border-frame/20
                   bg-panel-secondary px-5 py-2.5
                   text-sm font-bold text-ink
-                  shadow-[4px_4px_0_var(--theme-shadow)]
+                  shadow-soft
                   transition duration-150
-                  hover:-translate-x-0.5
                   hover:-translate-y-0.5
                   hover:bg-panel-highlight
                   hover:text-accent
-                  active:translate-x-1
-                  active:translate-y-1
-                  active:shadow-none
+                  active:translate-y-px
+                  active:shadow-soft-sm
                 "
                     >
                       ↑ Back to featured projects
@@ -468,8 +478,11 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
             <div className="mx-auto max-w-7xl">
               {displayedProject && (
                 <ProjectDetailPanel
+                  key={displayedProject.id}
                   project={displayedProject}
+                  allProjects={projects}
                   onBack={handleCloseProject}
+                  onOpenProject={handleOpenProject}
                 />
               )}
             </div>

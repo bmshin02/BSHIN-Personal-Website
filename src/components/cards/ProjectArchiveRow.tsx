@@ -23,12 +23,9 @@ function ProjectArchiveRow({
 
   return (
     <ProjectPanel
-      className="
-        group
-        transition-transform duration-200
-        hover:-translate-x-0.5
-        hover:-translate-y-0.5
-      "
+      interactive
+      expanded={expanded}
+      className="group"
       contentClassName="overflow-hidden"
     >
       {/* Compact row */}
@@ -57,9 +54,9 @@ function ProjectArchiveRow({
             loading="lazy"
             className="
               hidden h-16 w-24 shrink-0
-              border-2 border-frame
+              rounded-lg border border-frame/20
               bg-panel object-cover
-              shadow-[2px_2px_0_var(--theme-shadow)]
+              shadow-soft-sm
               sm:block
             "
           />
@@ -68,9 +65,9 @@ function ProjectArchiveRow({
             aria-hidden="true"
             className="
               hidden h-16 w-24 shrink-0
-              border-2 border-frame
+              rounded-lg border border-frame/20
               bg-panel
-              shadow-[2px_2px_0_var(--theme-shadow)]
+              shadow-soft-sm
               sm:block
             "
           />
@@ -82,7 +79,7 @@ function ProjectArchiveRow({
               {project.title}
             </h3>
 
-            <span className="border border-frame bg-panel px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-muted">
+            <span className="rounded-md border border-frame/25 bg-panel px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-muted">
               {project.category}
             </span>
 
@@ -122,16 +119,15 @@ function ProjectArchiveRow({
           className={`
             flex h-8 w-8 shrink-0
             items-center justify-center
-            border-2 border-frame
+            rounded-lg border border-frame/20
             bg-panel font-bold text-accent
-            shadow-[2px_2px_0_var(--theme-shadow)]
+            shadow-soft-sm
             transition duration-300
-            group-hover:-translate-x-0.5
             group-hover:-translate-y-0.5
             group-hover:bg-panel-highlight
             ${
               expanded
-                ? "translate-x-0.5 translate-y-0.5 rotate-180 shadow-none"
+                ? "rotate-180"
                 : ""
             }
           `}
@@ -150,7 +146,7 @@ function ProjectArchiveRow({
         `}
       >
         <div className="overflow-hidden">
-          <div className="border-t-2 border-dashed border-divider/50 px-4 pb-5 pt-4 sm:px-5">
+          <div className="border-t border-divider/25 px-4 pb-5 pt-4 sm:px-5">
             <h4 className="text-xs font-bold uppercase tracking-[0.14em] text-accent">
               About this project
             </h4>
@@ -167,22 +163,20 @@ function ProjectArchiveRow({
               <TechnologyTags technologies={project.technologies} />
             </div>
 
-            <div className="mt-5 flex flex-wrap gap-3 border-t border-dashed border-divider/50 pt-4">
+            <div className="mt-5 flex flex-wrap gap-3 border-t border-divider/25 pt-4">
               <button
                 type="button"
                 onClick={() => onOpenProject(project)}
                 className="
-                  border-2 border-frame
+                  rounded-lg border border-frame/20
                   bg-accent px-3 py-1.5
                   text-xs font-bold text-accent-text
-                  shadow-[2px_2px_0_var(--theme-shadow)]
+                  shadow-soft-sm
                   transition duration-150
-                  hover:-translate-x-0.5
                   hover:-translate-y-0.5
                   hover:bg-accent-hover
-                  active:translate-x-0.5
-                  active:translate-y-0.5
-                  active:shadow-none
+                  active:translate-y-px
+                  active:shadow-soft-sm
                 "
               >
                 Full case study →

@@ -1,5 +1,14 @@
+import { useEffect, useState } from "react";
+import {
+  LuArrowRight,
+  LuArrowUpRight,
+  LuCheck,
+  LuCopy,
+  LuMail,
+} from "react-icons/lu";
+
 import { socialLinks } from "../../data/socialLinks";
-import PixelPanel from "../ui/PixelPanel";
+import Panel from "../ui/Panel";
 
 function Contact() {
   const emailLink = socialLinks.find(
@@ -13,6 +22,29 @@ function Contact() {
   const emailAddress =
     emailLink?.displayText ?? emailLink?.href.replace("mailto:", "") ?? "";
 
+  const [copied, setCopied] = useState(false);
+
+  /* "Copied" switches back to "Copy" after two seconds. */
+  useEffect(() => {
+    if (!copied) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => setCopied(false), 2000);
+
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(emailAddress);
+      setCopied(true);
+    } catch {
+      /* Clipboard blocked: fall back to opening the mail app. */
+      window.location.href = emailLink?.href ?? "";
+    }
+  };
+
   return (
     <section
       id="contact"
@@ -23,13 +55,17 @@ function Contact() {
       "
     >
       <div className="mx-auto w-full max-w-4xl">
-        <PixelPanel className="w-full" contentClassName="p-6 sm:p-8">
+        <Panel className="w-full" contentClassName="p-6 sm:p-10">
           {/* TOP ROW */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p
               className="
+                flex items-center gap-3
                 text-xs font-bold uppercase
-                tracking-[0.18em] text-accent
+                tracking-[0.25em] text-accent
+                before:h-0.5 before:w-6
+                before:rounded-full before:bg-accent
+                sm:text-sm
               "
             >
               Contact
@@ -38,32 +74,29 @@ function Contact() {
             <div
               className="
                 flex items-center gap-2
-                border border-frame
+                rounded-full border border-frame/20
                 bg-panel-secondary
-                px-2.5 py-1.5
-                text-[9px] font-bold uppercase
+                px-3 py-1.5
+                text-[10px] font-bold uppercase
                 tracking-[0.14em] text-muted
               "
             >
-              <span
-                aria-hidden="true"
-                className="
-                  h-2 w-2
-                  border border-frame
-                  bg-accent
-                "
-              />
+              <span aria-hidden="true" className="relative flex h-2 w-2 shrink-0">
+                <span className="absolute inset-0 rounded-full bg-accent opacity-60 motion-safe:animate-ping" />
+                <span className="relative h-2 w-2 rounded-full bg-accent" />
+              </span>
               Open to opportunities
             </div>
           </div>
 
           {/* MAIN MESSAGE */}
-          <div className="mt-5">
+          <div className="mt-6">
             <h2
               className="
-                max-w-xl
-                text-2xl font-bold leading-tight text-ink
-                sm:text-3xl
+                max-w-2xl
+                text-3xl font-extrabold leading-[1.1]
+                tracking-tight text-ink
+                sm:text-4xl
               "
             >
               Have something interesting in mind?
@@ -71,7 +104,7 @@ function Contact() {
 
             <p
               className="
-                mt-3 max-w-2xl
+                mt-4 max-w-2xl
                 text-sm leading-6 text-muted
                 sm:text-base sm:leading-7
               "
@@ -83,7 +116,7 @@ function Contact() {
           </div>
 
           {/* DIVIDER */}
-          <div className="my-6 border-t-2 border-dashed border-divider/50" />
+          <div className="my-8 h-px bg-linear-to-r from-accent/60 via-divider/30 to-transparent" />
 
           {/* CONTACT ACTIONS */}
           <div
@@ -98,7 +131,7 @@ function Contact() {
               <div>
                 <p
                   className="
-                    mb-2
+                    mb-3
                     text-[10px] font-bold uppercase
                     tracking-[0.18em] text-muted
                   "
@@ -106,48 +139,77 @@ function Contact() {
                   Best way to reach me
                 </p>
 
-                <a
-                  href={emailLink.href}
-                  className="
-                    group
-                    inline-flex h-11 items-center
-                    border-2 border-frame
-                    bg-accent
-                    text-sm font-bold text-accent-text
-                    shadow-[3px_3px_0_var(--theme-shadow)]
-                    transition duration-150
-
-                    hover:-translate-x-0.5
-                    hover:-translate-y-0.5
-                    hover:bg-accent-hover
-                    hover:shadow-[5px_5px_0_var(--theme-shadow)]
-
-                    focus-visible:outline-none
-                    focus-visible:ring-4
-                    focus-visible:ring-accent/40
-
-                    active:translate-x-1
-                    active:translate-y-1
-                    active:shadow-none
-                  "
-                >
-                  <span
-                    aria-hidden="true"
+                <div className="flex items-center gap-2">
+                  <a
+                    href={emailLink.href}
                     className="
-                      flex h-full w-10
-                      items-center justify-center
-                      border-r-2 border-frame
-                      bg-panel-secondary
-                      text-base font-bold text-accent
-                      transition
-                      group-hover:bg-panel-highlight
+                      group/email
+                      inline-flex h-12 min-w-0 items-center gap-3
+                      rounded-xl border border-frame/20
+                      bg-accent px-5
+                      text-sm font-bold text-accent-text
+                      shadow-soft
+                      transition duration-150
+
+                      hover:-translate-y-0.5
+                      hover:bg-accent-hover
+                      hover:shadow-soft-lg
+
+                      focus-visible:outline-none
+                      focus-visible:ring-4
+                      focus-visible:ring-accent/40
+
+                      active:translate-y-px
+                      active:shadow-soft-sm
                     "
                   >
-                    @
-                  </span>
+                    <LuMail aria-hidden="true" className="h-4 w-4 shrink-0" />
+                    <span className="truncate">{emailAddress}</span>
+                    <LuArrowRight
+                      aria-hidden="true"
+                      className="
+                        h-4 w-4 shrink-0
+                        transition-transform duration-200
+                        group-hover/email:translate-x-1
+                      "
+                    />
+                  </a>
 
-                  <span className="px-4">{emailAddress}</span>
-                </a>
+                  <button
+                    type="button"
+                    onClick={copyEmail}
+                    aria-label={copied ? "Email address copied" : "Copy email address"}
+                    title={copied ? "Copied" : "Copy email address"}
+                    className="
+                      inline-flex h-12 items-center justify-center gap-2
+                      rounded-xl border border-frame/20
+                      bg-panel-secondary px-3.5 sm:px-4
+                      text-xs font-bold text-ink
+                      shadow-soft-sm
+                      transition duration-150
+
+                      hover:-translate-y-0.5
+                      hover:bg-panel-highlight
+                      hover:text-accent
+                      hover:shadow-soft
+
+                      focus-visible:outline-none
+                      focus-visible:ring-4
+                      focus-visible:ring-accent/40
+
+                      active:translate-y-px
+                    "
+                  >
+                    {copied ? (
+                      <LuCheck aria-hidden="true" className="h-4 w-4 text-accent" />
+                    ) : (
+                      <LuCopy aria-hidden="true" className="h-4 w-4 text-accent" />
+                    )}
+                    <span aria-live="polite" className="sr-only sm:not-sr-only">
+                      {copied ? "Copied" : "Copy"}
+                    </span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -155,7 +217,7 @@ function Contact() {
             <div>
               <p
                 className="
-                  mb-2
+                  mb-3
                   text-[10px] font-bold uppercase
                   tracking-[0.18em] text-muted
                   sm:text-right
@@ -176,27 +238,27 @@ function Contact() {
                       rel={link.external ? "noopener noreferrer" : undefined}
                       aria-label={link.label}
                       className="
-                        inline-flex h-9 items-center justify-center
+                        group/social
+                        inline-flex h-12 items-center justify-center
                         gap-2
-                        border-2 border-frame
-                        bg-panel-secondary px-3
-                        text-xs font-bold text-ink
-                        shadow-[2px_2px_0_var(--theme-shadow)]
+                        rounded-xl border border-frame/20
+                        bg-panel-secondary px-4
+                        text-sm font-bold text-ink
+                        shadow-soft-sm
                         transition duration-150
 
-                        hover:-translate-x-0.5
                         hover:-translate-y-0.5
+                        hover:border-accent/40
                         hover:bg-panel-highlight
                         hover:text-accent
-                        hover:shadow-[3px_3px_0_var(--theme-shadow)]
+                        hover:shadow-soft
 
                         focus-visible:outline-none
                         focus-visible:ring-4
                         focus-visible:ring-accent/40
 
-                        active:translate-x-0.5
-                        active:translate-y-0.5
-                        active:shadow-none
+                        active:translate-y-px
+                        active:shadow-soft-sm
                       "
                     >
                       {Icon && (
@@ -207,13 +269,26 @@ function Contact() {
                       )}
 
                       <span>{link.displayText ?? link.label}</span>
+
+                      {link.external && (
+                        <LuArrowUpRight
+                          aria-hidden="true"
+                          className="
+                            h-3.5 w-3.5 shrink-0 text-muted
+                            transition-transform duration-200
+                            group-hover/social:-translate-y-0.5
+                            group-hover/social:translate-x-0.5
+                            group-hover/social:text-accent
+                          "
+                        />
+                      )}
                     </a>
                   );
                 })}
               </div>
             </div>
           </div>
-        </PixelPanel>
+        </Panel>
       </div>
     </section>
   );

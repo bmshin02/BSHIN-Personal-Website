@@ -14,12 +14,12 @@ function ProjectStatusBadge({
   return (
     <span
       className={`
-        border font-bold uppercase tracking-wide
+        rounded-full border font-bold uppercase tracking-wide
         ${compact ? "px-2 py-0.5 text-[9px]" : "px-2 py-1 text-[10px]"}
         ${
           isCompleted
-            ? "border-emerald-950 bg-emerald-700 text-emerald-50"
-            : "border-amber-950 bg-amber-400 text-amber-950"
+            ? "border-emerald-950/20 bg-emerald-700 text-emerald-50"
+            : "border-amber-950/20 bg-amber-400 text-amber-950"
         }
       `}
     >

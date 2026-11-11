@@ -71,7 +71,7 @@ export const experiences: ExperienceItem[] = [
   {
     company: "Black Rocket Productions",
     role: "Technology Instructor",
-    date: "Mar 2026 - May 2026",
+    date: "Mar 2026 – May 2026",
     location: "Santa Clarita, California",
     description:
       "Taught students programming, game development, and creative technology through hands-on projects.",
@@ -97,7 +97,7 @@ export const experiences: ExperienceItem[] = [
   {
     company: "UC Riverside XCITE Center",
     role: "Undergraduate Software Developer / Learning Assistant",
-    date: "2023 - 2025",
+    date: "Apr 2023 – Jun 2025",
     location: "Riverside, California",
     description:
       "Designed and developed educational AR and VR applications used to teach chemistry, computer science, and theater concepts.",
@@ -124,7 +124,7 @@ export const experiences: ExperienceItem[] = [
   {
     company: "Content Creator / Freelancer",
     role: "Profile Graphics Designer",
-    date: "2019 - 2021",
+    date: "Jan 2019 – Jan 2021",
     location: "Remote",
     description:
       "Founded and managed a freelance design business creating custom profile designs, producing educational content, and coordinating client commissions.",

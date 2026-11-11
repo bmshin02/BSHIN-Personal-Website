@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 
-import { FaHome } from "react-icons/fa";
+import { LuHouse, LuMenu, LuX } from "react-icons/lu";
 
 import ThemeToggle from "../ui/ThemeToggle";
 
@@ -247,9 +247,10 @@ function Header({
       className="
         fixed inset-x-0 top-0 z-50
         h-16
-        border-b-4 border-frame
-        bg-panel text-ink
-        shadow-[0_4px_0_var(--theme-shadow)]
+        border-b border-frame/10
+        bg-panel/85 text-ink
+        shadow-soft-sm
+        backdrop-blur-md
       "
     >
       <div
@@ -274,27 +275,22 @@ function Header({
             className="
               group flex h-9 w-9 shrink-0
               items-center justify-center
-              border-2 border-frame
-              bg-accent
-              text-accent-text
-              shadow-[3px_3px_0_var(--theme-shadow)]
+              rounded-lg border border-frame/15
+              bg-panel-secondary/70
+              text-accent
               transition duration-150
 
-              hover:-translate-x-0.5
-              hover:-translate-y-0.5
-              hover:bg-accent-hover
-              hover:shadow-[4px_4px_0_var(--theme-shadow)]
+              hover:border-frame/25
+              hover:bg-panel-highlight
 
               focus-visible:outline-none
               focus-visible:ring-4
               focus-visible:ring-accent/40
 
-              active:translate-x-0.5
-              active:translate-y-0.5
-              active:shadow-none
+              active:scale-95
             "
           >
-            <FaHome aria-hidden="true" className="h-4 w-4" />
+            <LuHouse aria-hidden="true" className="h-[18px] w-[18px]" strokeWidth={2} />
           </a>
 
           {/* DESKTOP NAVIGATION */}
@@ -328,14 +324,11 @@ function Header({
                       className={`
                           inline-flex items-center
                           whitespace-nowrap
-                          border-2
-                          px-2.5 py-1.5
-                          text-[11px] font-bold
-                          uppercase tracking-wide
-                          transition duration-150
-
-                          hover:-translate-x-0.5
-                          hover:-translate-y-0.5
+                          rounded-full
+                          px-3.5 py-1.5
+                          text-[12px] font-semibold
+                          uppercase tracking-[0.08em]
+                          transition-colors duration-150
 
                           focus-visible:outline-none
                           focus-visible:ring-4
@@ -344,19 +337,14 @@ function Header({
                           ${
                             isActive
                               ? `
-                                border-frame
-                                bg-accent
-                                text-accent-text
-                                shadow-[2px_2px_0_var(--theme-shadow)]
+                                bg-accent/15
+                                text-accent
                               `
                               : `
-                                border-transparent
                                 text-muted
 
-                                hover:border-frame
-                                hover:bg-panel-secondary
-                                hover:text-accent
-                                hover:shadow-[2px_2px_0_var(--theme-shadow)]
+                                hover:bg-panel-secondary/80
+                                hover:text-ink
                               `
                           }
                         `}
@@ -382,31 +370,30 @@ function Header({
                 aria-controls="mobile-navigation"
                 aria-label={menuOpen ? "Close navigation" : "Open navigation"}
                 className="
-                  flex h-9 w-10
-                  items-center justify-center
-                  border-2 border-frame
-                  bg-panel-secondary
-                  text-lg font-bold text-ink
-                  shadow-[3px_3px_0_var(--theme-shadow)]
-                  transition duration-150
+              group flex h-9 w-9 shrink-0
+              items-center justify-center
+              rounded-lg border border-frame/15
+              bg-panel-secondary/70
+              text-accent
+              transition duration-150
 
-                  hover:-translate-x-0.5
-                  hover:-translate-y-0.5
-                  hover:bg-panel-highlight
-                  hover:text-accent
+              hover:border-frame/25
+              hover:bg-panel-highlight
 
-                  focus-visible:outline-none
-                  focus-visible:ring-4
-                  focus-visible:ring-accent/40
+              focus-visible:outline-none
+              focus-visible:ring-4
+              focus-visible:ring-accent/40
 
-                  active:translate-x-0.5
-                  active:translate-y-0.5
-                  active:shadow-none
+              active:scale-95
 
                   xl:hidden
                 "
               >
-                <span aria-hidden="true">{menuOpen ? "×" : "☰"}</span>
+                {menuOpen ? (
+                  <LuX aria-hidden="true" className="h-[18px] w-[18px]" />
+                ) : (
+                  <LuMenu aria-hidden="true" className="h-[18px] w-[18px]" />
+                )}
               </button>
             )}
           </div>
@@ -420,9 +407,9 @@ function Header({
                 absolute right-0
                 top-[calc(100%+8px)]
                 w-52
-                border-2 border-frame
+                rounded-lg border border-frame/20
                 bg-panel p-3
-                shadow-[6px_6px_0_var(--theme-shadow)]
+                shadow-soft
                 xl:hidden
               "
             >
@@ -439,7 +426,7 @@ function Header({
                         className={`
                           flex w-full items-center
                           justify-between
-                          border-2 border-frame
+                          rounded-lg border border-frame/20
                           px-3 py-2
                           text-xs font-bold
                           uppercase tracking-wide
@@ -448,8 +435,8 @@ function Header({
                           ${
                             isActive
                               ? `
-                                bg-accent
-                                text-accent-text
+                                bg-accent/15
+                                text-accent
                               `
                               : `
                                 bg-panel-secondary
@@ -466,10 +453,10 @@ function Header({
                         <span
                           aria-hidden="true"
                           className={`
-                            h-2.5 w-2.5
-                            border border-frame
+                            h-2.5 w-2.5 rounded-full
+                            border border-frame/25
 
-                            ${isActive ? "bg-accent-text" : "bg-panel"}
+                            ${isActive ? "bg-accent" : "bg-panel"}
                           `}
                         />
                       </a>

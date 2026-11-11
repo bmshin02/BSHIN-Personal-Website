@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { LuMoon, LuSun } from "react-icons/lu";
 
 type Theme = "light" | "dark";
 
@@ -34,26 +35,25 @@ function ThemeToggle() {
       aria-label={isLightMode ? "Switch to dark mode" : "Switch to light mode"}
       title={isLightMode ? "Switch to dark mode" : "Switch to light mode"}
       className="
-        ml-auto flex h-9 w-10
+        ml-auto flex h-9 w-9
         items-center justify-center
-        border-2 border-frame
-        bg-panel-secondary
-        text-lg font-bold text-ink
-        shadow-[3px_3px_0_var(--theme-shadow)]
+        rounded-lg border border-frame/15
+        bg-panel-secondary/70
+        text-accent
         transition duration-150
-        hover:-translate-x-0.5
-        hover:-translate-y-0.5
+        hover:border-frame/25
         hover:bg-panel-highlight
-        hover:text-accent
         focus-visible:outline-none
         focus-visible:ring-4
         focus-visible:ring-accent/40
-        active:translate-x-0.5
-        active:translate-y-0.5
-        active:shadow-none
+        active:scale-95
       "
     >
-      <span aria-hidden="true">{isLightMode ? "☾" : "☀"}</span>
+      {isLightMode ? (
+        <LuMoon aria-hidden="true" className="h-[18px] w-[18px]" />
+      ) : (
+        <LuSun aria-hidden="true" className="h-[18px] w-[18px]" />
+      )}
     </button>
   );
 }
