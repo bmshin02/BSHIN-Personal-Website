@@ -2,17 +2,24 @@ import { useEffect } from "react";
 
 function SectionFadeManager() {
   useEffect(() => {
-    const sections = Array.from(
-      document.querySelectorAll<HTMLElement>("main > section[id]"),
-    );
+    /*
+     * Look the sections up on every update instead of once, so a
+     * section that React re-creates (for example after a hot reload)
+     * still gets marked active and does not stay faded.
+     */
+    const getSections = () =>
+      Array.from(document.querySelectorAll<HTMLElement>("main > section[id]"));
 
-    if (sections.length === 0) {
+    const main = document.querySelector("main");
+
+    if (!main) {
       return;
     }
 
     let animationFrameId: number | null = null;
 
     const updateActiveSection = () => {
+      const sections = getSections();
       const viewportCenter = window.innerHeight / 2;
 
       const visibleSections = sections.filter((section) => {
@@ -77,22 +84,24 @@ function SectionFadeManager() {
 
     // Recalculate when expandable content changes section height.
     const resizeObserver = new ResizeObserver(scheduleUpdate);
+    resizeObserver.observe(main);
 
-    sections.forEach((section) => {
-      resizeObserver.observe(section);
-    });
+    // Recalculate when sections are added, removed or re-created.
+    const mutationObserver = new MutationObserver(scheduleUpdate);
+    mutationObserver.observe(main, { childList: true });
 
     return () => {
       window.removeEventListener("scroll", scheduleUpdate);
       window.removeEventListener("resize", scheduleUpdate);
 
       resizeObserver.disconnect();
+      mutationObserver.disconnect();
 
       if (animationFrameId !== null) {
         window.cancelAnimationFrame(animationFrameId);
       }
 
-      sections.forEach((section) => {
+      getSections().forEach((section) => {
         delete section.dataset.activeSection;
       });
     };

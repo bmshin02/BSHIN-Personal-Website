@@ -3,6 +3,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import Header from "../components/layout/Header";
 import Background from "../components/layout/Background";
 import SectionFadeManager from "../components/ui/SectionFadeManager";
+import { useCardEntrances } from "../hooks/useCardEntrances";
 
 import Hero from "../components/sections/Hero";
 import About from "../components/sections/About";
@@ -20,6 +21,8 @@ function PortfolioPage() {
   const wasCaseStudyOpenRef = useRef(false);
 
   const projectsRef = useRef<ProjectsHandle>(null);
+
+  useCardEntrances(isProjectCaseStudyOpen);
 
   /*
    * Section to show once the case study closes.
@@ -88,17 +91,7 @@ function PortfolioPage() {
     <div className="relative isolate min-h-screen overflow-x-hidden bg-page text-ink">
       {/* Background layer */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <Background
-          dotSize={1}
-          gap={35}
-          baseColor="#395254"
-          glowColor="#ffefde"
-          proximity={80}
-          glowIntensity={0.5}
-          waveSpeed={10}
-          driftAmount={3}
-          driftSpeed={3}
-        />
+        <Background />
       </div>
 
       {/* Website content */}

@@ -26,7 +26,7 @@ src/
     sections/           Portfolio page sections (Hero, About, Projects, ...)
     cards/              Project cards and archive rows
     panels/             Project case-study panels
-    ui/                 Small reusable pieces (PixelPanel, ThemeToggle, ...)
+    ui/                 Small reusable pieces (Panel, ThemeToggle, ...)
   data/                 Site content: education, experiences, skills, social links
     projects/           One file per project, plus shared types
 ```

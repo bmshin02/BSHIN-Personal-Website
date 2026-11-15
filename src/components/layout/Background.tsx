@@ -1,632 +1,480 @@
-import { useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export interface BackgroundProps {
-  className?: string;
-  children?: ReactNode;
+import { useThemeColor } from "../../hooks/useThemeColor";
 
-  dotSize?: number;
-  gap?: number;
-
-  baseColor?: string;
-  glowColor?: string;
-
-  proximity?: number;
-  glowIntensity?: number;
-
-  waveSpeed?: number;
-  driftAmount?: number;
-  driftSpeed?: number;
-
-  scrollParallax?: number;
-
-  twinkleChance?: number;
-  twinkleAmount?: number;
-  twinkleSpeed?: number;
-
-  showConnections?: boolean;
-  connectionRadius?: number;
-  connectionOpacity?: number;
-}
-
-type RGB = {
-  r: number;
-  g: number;
-  b: number;
-};
-
-type CanvasSize = {
-  width: number;
-  height: number;
-};
-
-type RenderedDot = {
-  column: number;
-  row: number;
-  x: number;
-  y: number;
-  radius: number;
-  opacity: number;
-  red: number;
-  green: number;
-  blue: number;
-  glow: number;
-};
-
-function hexToRgb(hex: string): RGB {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-
-  return result
-    ? {
-        r: Number.parseInt(result[1], 16),
-        g: Number.parseInt(result[2], 16),
-        b: Number.parseInt(result[3], 16),
-      }
-    : {
-        r: 0,
-        g: 0,
-        b: 0,
-      };
-}
+import DotGrid from "./DotGrid";
 
 /*
- * Returns a consistent random-looking number.
+ * Aurora mesh background: soft fields of the theme's colours
+ * that drift, warp and blend into each other, drawn by a small
+ * WebGL shader. Scrolling nudges the colours along and a faint
+ * light follows the cursor. The original dot grid sits on top.
  *
- * The same grid location and seed always return the same
- * result, which prevents dots from changing randomly while
- * scrolling.
+ * - Rendered at reduced resolution (it is all soft gradients)
+ *   and capped at about 30fps.
+ * - With reduced motion it is drawn once and holds still.
+ * - Without WebGL it falls back to static CSS glows.
  */
-function seededRandom(column: number, row: number, seed: number) {
-  const value =
-    Math.sin(column * 12.9898 + row * 78.233 + seed * 37.719) * 43758.5453;
 
-  return value - Math.floor(value);
+const RENDER_SCALE = 0.5;
+const FRAME_INTERVAL = 1000 / 30;
+
+const VERTEX_SHADER = `
+attribute vec2 position;
+
+void main() {
+  gl_Position = vec4(position, 0.0, 1.0);
+}
+`;
+
+const FRAGMENT_SHADER = `
+precision mediump float;
+
+uniform vec2 uResolution;
+uniform float uTime;
+uniform float uScroll;
+uniform vec2 uPointer;
+uniform float uPointerStrength;
+
+uniform vec3 uBase;
+uniform vec3 uColor1;
+uniform vec3 uColor2;
+uniform vec3 uColor3;
+uniform vec3 uColor4;
+uniform float uStrength;
+
+// 2D simplex noise by Ashima Arts (MIT licence)
+vec3 permute(vec3 x) {
+  return mod(((x * 34.0) + 1.0) * x, 289.0);
 }
 
-function getDotKey(column: number, row: number) {
-  return `${column}:${row}`;
+float snoise(vec2 v) {
+  const vec4 C = vec4(
+    0.211324865405187,
+    0.366025403784439,
+    -0.577350269189626,
+    0.024390243902439
+  );
+
+  vec2 i = floor(v + dot(v, C.yy));
+  vec2 x0 = v - i + dot(i, C.xx);
+  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+
+  i = mod(i, 289.0);
+
+  vec3 p = permute(
+    permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0)
+  );
+
+  vec3 m = max(
+    0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)),
+    0.0
+  );
+  m = m * m;
+  m = m * m;
+
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+
+  m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+
+  vec3 g;
+  g.x = a0.x * x0.x + h.x * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+
+  return 130.0 * dot(m, g);
 }
 
-function Background({
-  className = "",
-  children,
+float field(vec2 p, vec2 center, float radius) {
+  vec2 d = p - center;
+  return exp(-dot(d, d) / (radius * radius));
+}
 
-  dotSize = 2,
-  gap = 24,
+void main() {
+  vec2 uv = gl_FragCoord.xy / uResolution;
+  float aspect = uResolution.x / uResolution.y;
+  vec2 p = vec2(uv.x * aspect, uv.y);
 
-  baseColor = "#404040",
-  glowColor = "#8b5cf6",
+  float t = uTime;
 
-  proximity = 120,
-  glowIntensity = 1,
+  // Scrolling moves the colours along their paths.
+  float phase = t * 0.6 + uScroll * 1.4;
 
-  waveSpeed = 0.5,
-  driftAmount = 2.5,
-  driftSpeed = 1,
+  // Warp the space so the colour fields get soft, organic edges.
+  vec2 warp = vec2(
+    snoise(p * 1.1 + vec2(t * 0.05, -t * 0.04)),
+    snoise(p * 1.1 + vec2(-t * 0.04, t * 0.05) + 7.3)
+  );
+  vec2 q = p + warp * 0.22;
 
-  /*
-   * A positive value moves the dots upward when
-   * the page scrolls downward.
-   */
-  scrollParallax = 0.08,
+  vec2 c1 = vec2(aspect * (0.22 + 0.16 * sin(phase * 0.31)), 0.82 + 0.14 * cos(phase * 0.23));
+  vec2 c2 = vec2(aspect * (0.80 + 0.14 * cos(phase * 0.27)), 0.72 + 0.18 * sin(phase * 0.19));
+  vec2 c3 = vec2(aspect * (0.55 + 0.25 * sin(phase * 0.17 + 1.0)), 0.22 + 0.15 * cos(phase * 0.29));
+  vec2 c4 = vec2(aspect * (0.12 + 0.10 * cos(phase * 0.21 + 2.0)), 0.25 + 0.14 * sin(phase * 0.33));
 
-  /*
-   * Only a small percentage of dots twinkle.
-   */
-  twinkleChance = 0.06,
-  twinkleAmount = 0.5,
-  twinkleSpeed = 1,
+  vec3 color = uBase;
 
-  /*
-   * Connections appear only around the mouse.
-   */
-  showConnections = true,
-  connectionRadius = 160,
-  connectionOpacity = 0.12,
-}: BackgroundProps) {
+  color = mix(color, uColor4, field(q, c4, 0.50) * uStrength);
+  color = mix(color, uColor2, field(q, c2, 0.55) * uStrength);
+  color = mix(color, uColor3, field(q, c3, 0.60) * uStrength);
+  color = mix(color, uColor1, field(q, c1, 0.50) * uStrength);
+
+  // Faint flowing streaks, like the bands of an aurora.
+  float streak = snoise(vec2(q.x * 0.9 + t * 0.03, q.y * 2.2 - t * 0.02 + uScroll * 0.3));
+  float band = smoothstep(0.18, 0.0, abs(streak));
+  color = mix(color, uColor1, band * 0.06 * uStrength);
+
+  // A soft light that follows the cursor.
+  vec2 pointer = vec2(uPointer.x * aspect, uPointer.y);
+  color = mix(color, uColor1, field(p, pointer, 0.30) * 0.22 * uPointerStrength * uStrength);
+
+  // Gentle vignette.
+  float vignette = smoothstep(1.25, 0.35, length((uv - 0.5) * vec2(1.2, 1.0)));
+  color *= mix(0.86, 1.0, vignette);
+
+  // Dither to avoid banding in the gradients.
+  float dither = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
+  color += (dither - 0.5) / 255.0;
+
+  gl_FragColor = vec4(color, 1.0);
+}
+`;
+
+type RGB = [number, number, number];
+
+function hexToRgb(hex: string): RGB {
+  const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
+
+  return match
+    ? [
+        Number.parseInt(match[1], 16) / 255,
+        Number.parseInt(match[2], 16) / 255,
+        Number.parseInt(match[3], 16) / 255,
+      ]
+    : [0, 0, 0];
+}
+
+function compileShader(
+  gl: WebGLRenderingContext,
+  type: number,
+  source: string,
+) {
+  const shader = gl.createShader(type);
+
+  if (!shader) {
+    return null;
+  }
+
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.warn("Background shader failed:", gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    return null;
+  }
+
+  return shader;
+}
+
+function supportsWebGL() {
+  try {
+    return Boolean(document.createElement("canvas").getContext("webgl"));
+  } catch {
+    return false;
+  }
+}
+
+type Palette = {
+  base: RGB;
+  colors: [RGB, RGB, RGB, RGB];
+  strength: number;
+};
+
+function Background() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  const canvasSizeRef = useRef<CanvasSize>({
-    width: 0,
-    height: 0,
-  });
+  const [hasWebGL, setHasWebGL] = useState(supportsWebGL);
 
-  const mouseRef = useRef({
-    x: -1000,
-    y: -1000,
-  });
+  const base = useThemeColor("--theme-background", "#0f0b08");
+  const color1 = useThemeColor("--theme-aurora-1", "#5c3a24");
+  const color2 = useThemeColor("--theme-aurora-2", "#3a2418");
+  const color3 = useThemeColor("--theme-aurora-3", "#6e4527");
+  const color4 = useThemeColor("--theme-aurora-4", "#241812");
+  const strength = useThemeColor("--theme-aurora-strength", "0.5");
+  const dotColor = useThemeColor("--theme-dot", "#8a7663");
+  const dotGlowColor = useThemeColor("--theme-dot-glow", "#e8b48a");
 
-  const scrollRef = useRef(0);
-  const animationRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number | null>(null);
+  const paletteRef = useRef<Palette | null>(null);
 
-  const baseRgb = useMemo(() => {
-    return hexToRgb(baseColor);
-  }, [baseColor]);
+  /* Redraws one frame; used when motion is reduced. */
+  const renderOnceRef = useRef<(() => void) | null>(null);
 
-  const glowRgb = useMemo(() => {
-    return hexToRgb(glowColor);
-  }, [glowColor]);
-
-  const buildCanvas = useCallback(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-
-    if (!canvas || !container) {
-      return;
-    }
-
-    const rect = container.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
-
-    canvas.style.width = `${rect.width}px`;
-    canvas.style.height = `${rect.height}px`;
-
-    const context = canvas.getContext("2d");
-
-    if (context) {
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-
-    canvasSizeRef.current = {
-      width: rect.width,
-      height: rect.height,
+  useEffect(() => {
+    paletteRef.current = {
+      base: hexToRgb(base),
+      colors: [
+        hexToRgb(color1),
+        hexToRgb(color2),
+        hexToRgb(color3),
+        hexToRgb(color4),
+      ],
+      strength: Number.parseFloat(strength) || 0.5,
     };
-  }, []);
 
-  const draw = useCallback(() => {
+    renderOnceRef.current?.();
+  }, [base, color1, color2, color3, color4, strength]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
 
-    if (!canvas || !context) {
+    if (!hasWebGL || !canvas) {
       return;
     }
 
-    const { width, height } = canvasSizeRef.current;
+    const gl = canvas.getContext("webgl", {
+      antialias: false,
+      depth: false,
+      stencil: false,
+      alpha: false,
+      powerPreference: "low-power",
+    });
 
-    if (width === 0 || height === 0) {
+    if (!gl) {
       return;
     }
 
-    context.clearRect(0, 0, width, height);
+    const vertexShader = compileShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER);
+    const fragmentShader = compileShader(
+      gl,
+      gl.FRAGMENT_SHADER,
+      FRAGMENT_SHADER,
+    );
 
-    startTimeRef.current ??= performance.now();
+    const program = gl.createProgram();
 
-    const elapsedSeconds = (performance.now() - startTimeRef.current) / 1000;
-
-    const cellSize = dotSize + gap;
-    const waveTime = elapsedSeconds * waveSpeed;
-
-    /*
-     * Positive scrollParallax means the dots move upward
-     * while the page moves downward.
-     */
-    const scrollDistance = scrollRef.current * scrollParallax;
-
-    const horizontalOffset = (width % cellSize) / 2;
-
-    const verticalOffset = (height % cellSize) / 2;
-
-    const overscan = Math.max(2, Math.ceil(driftAmount / cellSize) + 2);
-
-    /*
-     * Calculate which permanent world rows are currently
-     * visible. This keeps scrolling smooth and avoids
-     * overlapping duplicate dots.
-     */
-    const firstRow =
-      Math.floor((scrollDistance - verticalOffset) / cellSize) - overscan;
-
-    const lastRow =
-      Math.ceil((scrollDistance + height - verticalOffset) / cellSize) +
-      overscan;
-
-    const firstColumn = Math.floor(-horizontalOffset / cellSize) - overscan;
-
-    const lastColumn =
-      Math.ceil((width - horizontalOffset) / cellSize) + overscan;
-
-    const mouseX = mouseRef.current.x;
-    const mouseY = mouseRef.current.y;
-    const proximitySquared = proximity * proximity;
-
-    const renderedDots: RenderedDot[] = [];
-    const dotLookup = new Map<string, RenderedDot>();
-
-    /*
-     * Calculate every visible dot first.
-     *
-     * Lines are drawn after this step but before the dots,
-     * so the dots remain visually on top.
-     */
-    for (let row = firstRow; row <= lastRow; row += 1) {
-      for (let column = firstColumn; column <= lastColumn; column += 1) {
-        const baseOpacity = 0.3 + seededRandom(column, row, 1) * 0.2;
-
-        const phaseX = seededRandom(column, row, 2) * Math.PI * 2;
-
-        const phaseY = seededRandom(column, row, 3) * Math.PI * 2;
-
-        const speedX = 0.25 + seededRandom(column, row, 4) * 0.35;
-
-        const speedY = 0.25 + seededRandom(column, row, 5) * 0.35;
-
-        const movement =
-          driftAmount * (0.4 + seededRandom(column, row, 6) * 0.6);
-
-        const baseX = horizontalOffset + column * cellSize;
-
-        const baseY = verticalOffset + row * cellSize - scrollDistance;
-
-        const animatedX =
-          baseX +
-          Math.sin(elapsedSeconds * speedX * driftSpeed + phaseX) * movement;
-
-        const animatedY =
-          baseY +
-          Math.cos(elapsedSeconds * speedY * driftSpeed + phaseY) * movement;
-
-        if (
-          animatedX < -cellSize ||
-          animatedX > width + cellSize ||
-          animatedY < -cellSize ||
-          animatedY > height + cellSize
-        ) {
-          continue;
-        }
-
-        const differenceX = animatedX - mouseX;
-        const differenceY = animatedY - mouseY;
-
-        const distanceSquared =
-          differenceX * differenceX + differenceY * differenceY;
-
-        const wave =
-          Math.sin(animatedX * 0.02 + animatedY * 0.02 + waveTime) * 0.5 + 0.5;
-
-        /*
-         * A small percentage of dots become stars.
-         */
-        const canTwinkle = seededRandom(column, row, 7) < twinkleChance;
-
-        const twinklePhase = seededRandom(column, row, 8) * Math.PI * 2;
-
-        const individualTwinkleSpeed =
-          0.5 + seededRandom(column, row, 9) * 1.25;
-
-        const rawTwinkle =
-          Math.sin(
-            elapsedSeconds * twinkleSpeed * individualTwinkleSpeed +
-              twinklePhase,
-          ) *
-            0.5 +
-          0.5;
-
-        /*
-         * Raising the value makes the twinkle appear briefly
-         * instead of constantly pulsing.
-         */
-        const twinkle = canTwinkle
-          ? Math.pow(rawTwinkle, 5) * twinkleAmount
-          : 0;
-
-        let opacity = baseOpacity + wave * 0.12 + twinkle * 0.45;
-
-        let scale = 1 + wave * 0.18 + twinkle * 0.85;
-
-        let red = baseRgb.r;
-        let green = baseRgb.g;
-        let blue = baseRgb.b;
-
-        let glow = twinkle * 0.15;
-
-        /*
-         * Cursor glow effect.
-         */
-        if (distanceSquared < proximitySquared) {
-          const distance = Math.sqrt(distanceSquared);
-
-          const progress = 1 - distance / proximity;
-
-          const easedProgress = progress * progress * (3 - 2 * progress);
-
-          red = Math.round(baseRgb.r + (glowRgb.r - baseRgb.r) * easedProgress);
-
-          green = Math.round(
-            baseRgb.g + (glowRgb.g - baseRgb.g) * easedProgress,
-          );
-
-          blue = Math.round(
-            baseRgb.b + (glowRgb.b - baseRgb.b) * easedProgress,
-          );
-
-          opacity += easedProgress * 0.65;
-          scale += easedProgress * 0.75;
-
-          glow = Math.max(glow, easedProgress * glowIntensity);
-        }
-
-        opacity = Math.min(1, opacity);
-
-        const dot: RenderedDot = {
-          column,
-          row,
-          x: animatedX,
-          y: animatedY,
-          radius: (dotSize / 2) * scale,
-          opacity,
-          red,
-          green,
-          blue,
-          glow,
-        };
-
-        renderedDots.push(dot);
-
-        dotLookup.set(getDotKey(column, row), dot);
-      }
+    if (!vertexShader || !fragmentShader || !program) {
+      return;
     }
 
-    /*
-     * Draw faint connections near the cursor.
-     *
-     * Each dot connects only to the dot on its right and
-     * below it, preventing duplicated lines.
-     */
-    if (showConnections && connectionRadius > 0 && mouseX > -500) {
-      context.save();
-      context.lineWidth = 1;
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
 
-      const neighborDirections = [
-        [1, 0],
-        [0, 1],
-      ] as const;
-
-      for (const dot of renderedDots) {
-        for (const [columnOffset, rowOffset] of neighborDirections) {
-          const neighbor = dotLookup.get(
-            getDotKey(dot.column + columnOffset, dot.row + rowOffset),
-          );
-
-          if (!neighbor) {
-            continue;
-          }
-
-          const midpointX = (dot.x + neighbor.x) / 2;
-
-          const midpointY = (dot.y + neighbor.y) / 2;
-
-          const mouseDifferenceX = midpointX - mouseX;
-
-          const mouseDifferenceY = midpointY - mouseY;
-
-          const mouseDistance = Math.sqrt(
-            mouseDifferenceX * mouseDifferenceX +
-              mouseDifferenceY * mouseDifferenceY,
-          );
-
-          if (mouseDistance > connectionRadius) {
-            continue;
-          }
-
-          const cursorProgress = 1 - mouseDistance / connectionRadius;
-
-          const easedProgress = cursorProgress * cursorProgress;
-
-          const alpha = connectionOpacity * easedProgress;
-
-          context.beginPath();
-          context.moveTo(dot.x, dot.y);
-          context.lineTo(neighbor.x, neighbor.y);
-
-          context.strokeStyle = `rgba(${glowRgb.r}, ${glowRgb.g}, ${glowRgb.b}, ${alpha})`;
-
-          context.stroke();
-        }
-      }
-
-      context.restore();
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.warn("Background program failed:", gl.getProgramInfoLog(program));
+      return;
     }
 
-    /*
-     * Draw glows first.
-     */
-    for (const dot of renderedDots) {
-      if (dot.glow <= 0) {
-        continue;
-      }
+    gl.useProgram(program);
 
-      const glowRadius = dot.radius * 4;
+    /* One triangle that covers the whole screen. */
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 3, -1, -1, 3]),
+      gl.STATIC_DRAW,
+    );
 
-      const gradient = context.createRadialGradient(
-        dot.x,
-        dot.y,
-        0,
-        dot.x,
-        dot.y,
-        glowRadius,
-      );
+    const positionLocation = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-      gradient.addColorStop(
-        0,
-        `rgba(${glowRgb.r}, ${glowRgb.g}, ${glowRgb.b}, ${dot.glow * 0.4})`,
-      );
+    const uniform = (name: string) => gl.getUniformLocation(program, name);
 
-      gradient.addColorStop(
-        0.5,
-        `rgba(${glowRgb.r}, ${glowRgb.g}, ${glowRgb.b}, ${dot.glow * 0.1})`,
-      );
+    const uniforms = {
+      resolution: uniform("uResolution"),
+      time: uniform("uTime"),
+      scroll: uniform("uScroll"),
+      pointer: uniform("uPointer"),
+      pointerStrength: uniform("uPointerStrength"),
+      base: uniform("uBase"),
+      colors: [
+        uniform("uColor1"),
+        uniform("uColor2"),
+        uniform("uColor3"),
+        uniform("uColor4"),
+      ],
+      strength: uniform("uStrength"),
+    };
 
-      gradient.addColorStop(
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    /* Pointer in 0..1 with y pointing up, eased towards the target. */
+    const pointer = { x: 0.5, y: 0.5, targetX: 0.5, targetY: 0.5 };
+    let pointerStrength = 0;
+    let pointerTarget = 0;
+    let smoothScroll = window.scrollY / window.innerHeight;
+
+    const resize = () => {
+      const width = Math.max(1, Math.round(window.innerWidth * RENDER_SCALE));
+      const height = Math.max(
         1,
-        `rgba(${glowRgb.r}, ${glowRgb.g}, ${glowRgb.b}, 0)`,
+        Math.round(window.innerHeight * RENDER_SCALE),
       );
 
-      context.beginPath();
-
-      context.arc(dot.x, dot.y, glowRadius, 0, Math.PI * 2);
-
-      context.fillStyle = gradient;
-      context.fill();
-    }
-
-    /*
-     * Draw the dots on top of the lines and glows.
-     */
-    for (const dot of renderedDots) {
-      context.beginPath();
-
-      context.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
-
-      context.fillStyle = `rgba(${dot.red}, ${dot.green}, ${dot.blue}, ${dot.opacity})`;
-
-      context.fill();
-    }
-  }, [
-    baseRgb,
-    glowRgb,
-    dotSize,
-    gap,
-    proximity,
-    glowIntensity,
-    waveSpeed,
-    driftAmount,
-    driftSpeed,
-    scrollParallax,
-    twinkleChance,
-    twinkleAmount,
-    twinkleSpeed,
-    showConnections,
-    connectionRadius,
-    connectionOpacity,
-  ]);
-
-  useEffect(() => {
-    buildCanvas();
-
-    const container = containerRef.current;
-
-    if (!container) {
-      return;
-    }
-
-    const resizeObserver = new ResizeObserver(buildCanvas);
-
-    resizeObserver.observe(container);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [buildCanvas]);
-
-  useEffect(() => {
-    const loop = () => {
-      draw();
-      animationRef.current = window.requestAnimationFrame(loop);
+      canvas.width = width;
+      canvas.height = height;
+      gl.viewport(0, 0, width, height);
     };
 
-    animationRef.current = window.requestAnimationFrame(loop);
+    const startTime = performance.now();
 
-    return () => {
-      if (animationRef.current !== null) {
-        window.cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [draw]);
+    const render = (now: number) => {
+      const palette = paletteRef.current;
 
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const canvas = canvasRef.current;
-
-      if (!canvas) {
+      if (!palette) {
         return;
       }
 
-      const rect = canvas.getBoundingClientRect();
+      const seconds = reducedMotion ? 0 : (now - startTime) / 1000;
 
-      mouseRef.current = {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
+      if (!reducedMotion) {
+        const targetScroll = window.scrollY / window.innerHeight;
+        smoothScroll += (targetScroll - smoothScroll) * 0.08;
+
+        pointer.x += (pointer.targetX - pointer.x) * 0.06;
+        pointer.y += (pointer.targetY - pointer.y) * 0.06;
+        pointerStrength += (pointerTarget - pointerStrength) * 0.05;
+      }
+
+      gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
+      gl.uniform1f(uniforms.time, seconds);
+      gl.uniform1f(uniforms.scroll, reducedMotion ? 0 : smoothScroll);
+      gl.uniform2f(uniforms.pointer, pointer.x, pointer.y);
+      gl.uniform1f(uniforms.pointerStrength, pointerStrength);
+      gl.uniform3fv(uniforms.base, palette.base);
+      palette.colors.forEach((color, index) => {
+        gl.uniform3fv(uniforms.colors[index], color);
+      });
+      gl.uniform1f(uniforms.strength, palette.strength);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+
+    resize();
+
+    let animationFrame: number | null = null;
+    let lastFrame = 0;
+
+    if (reducedMotion) {
+      renderOnceRef.current = () => render(performance.now());
+      render(performance.now());
+    } else {
+      const loop = (now: number) => {
+        animationFrame = window.requestAnimationFrame(loop);
+
+        if (now - lastFrame < FRAME_INTERVAL) {
+          return;
+        }
+
+        lastFrame = now;
+        render(now);
       };
+
+      animationFrame = window.requestAnimationFrame(loop);
+    }
+
+    const handleResize = () => {
+      resize();
+
+      if (reducedMotion) {
+        render(performance.now());
+      }
     };
 
-    const handleMouseLeave = () => {
-      mouseRef.current = {
-        x: -1000,
-        y: -1000,
-      };
+    const handlePointerMove = (event: PointerEvent) => {
+      pointer.targetX = event.clientX / window.innerWidth;
+      pointer.targetY = 1 - event.clientY / window.innerHeight;
+      pointerTarget = 1;
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-
-    document.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-
-      document.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      scrollRef.current = window.scrollY;
+    const handlePointerLeave = () => {
+      pointerTarget = 0;
     };
 
-    handleScroll();
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      setHasWebGL(false);
+    };
 
-    window.addEventListener("scroll", handleScroll, {
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("pointermove", handlePointerMove, {
       passive: true,
     });
+    document.documentElement.addEventListener(
+      "pointerleave",
+      handlePointerLeave,
+    );
+    canvas.addEventListener("webglcontextlost", handleContextLost);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+
+      renderOnceRef.current = null;
+
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("pointermove", handlePointerMove);
+      document.documentElement.removeEventListener(
+        "pointerleave",
+        handlePointerLeave,
+      );
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
+
+      gl.deleteBuffer(buffer);
+      gl.deleteProgram(program);
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
     };
-  }, []);
+  }, [hasWebGL]);
 
   return (
     <div
-      ref={containerRef}
-      aria-hidden={!children}
-      className={`
+      aria-hidden="true"
+      className="
         pointer-events-none
         fixed inset-0 z-0
         overflow-hidden
         bg-background
-        ${className}
-      `}
+      "
     >
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+      {hasWebGL ? (
+        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+      ) : (
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="bg-glow bg-glow-a" />
+          <div className="bg-glow bg-glow-b" />
+          <div className="bg-glow bg-glow-c" />
+        </div>
+      )}
 
-      {/* Soft edge shading */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none
-          absolute inset-0
-        "
-        style={{
-          background: `
-            radial-gradient(
-              ellipse at center,
-              transparent 0%,
-              transparent 52%,
-              color-mix(
-                in srgb,
-                var(--theme-background) 72%,
-                transparent
-              ) 100%
-            )
-          `,
-        }}
+      {/* The original interactive dot grid, on top of the aurora */}
+      <DotGrid
+        dotSize={2}
+        gap={34}
+        baseColor={dotColor}
+        glowColor={dotGlowColor}
+        proximity={150}
+        glowIntensity={0.9}
+        waveSpeed={10}
+        driftAmount={1.5}
+        driftSpeed={3}
+        connectionRadius={190}
+        connectionOpacity={0.3}
+        gridLineOpacity={0.08}
       />
 
-      {children && (
-        <div className="relative z-10 h-full w-full">{children}</div>
-      )}
+      {/* Film grain */}
+      <div className="bg-grain pointer-events-none" />
     </div>
   );
 }

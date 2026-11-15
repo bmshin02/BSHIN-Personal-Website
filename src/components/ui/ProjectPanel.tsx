@@ -1,112 +1,79 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 type ProjectPanelProps = {
   children: ReactNode;
   className?: string;
   contentClassName?: string;
+  /* An open project row gets an accent border. */
   expanded?: boolean;
+  /* 0 removes the shadow; any other value keeps the soft shadow. */
   shadowSize?: number;
+  /* Clickable cards lift and glow on hover. */
+  interactive?: boolean;
 };
 
-const projectPixelShape = `
-  polygon(
-    8px 0,
-    calc(100% - 8px) 0,
-
-    calc(100% - 8px) 2px,
-    calc(100% - 2px) 2px,
-
-    calc(100% - 2px) 8px,
-    100% 8px,
-
-    100% calc(100% - 8px),
-    calc(100% - 2px) calc(100% - 8px),
-
-    calc(100% - 2px) calc(100% - 2px),
-    calc(100% - 8px) calc(100% - 2px),
-
-    calc(100% - 8px) 100%,
-    8px 100%,
-
-    8px calc(100% - 2px),
-    2px calc(100% - 2px),
-
-    2px calc(100% - 8px),
-    0 calc(100% - 8px),
-
-    0 8px,
-    2px 8px,
-
-    2px 2px,
-    8px 2px
-  )
-`;
-
+/*
+ * Soft card for project cards and archive rows: rounded corners,
+ * a thin border, a warm corner glow, an accent edge highlight
+ * and a soft shadow tinted by the active theme.
+ */
 function ProjectPanel({
   children,
   className = "",
   contentClassName = "",
   expanded = false,
   shadowSize = 5,
+  interactive = false,
 }: ProjectPanelProps) {
-  const panelStyle = {
-    clipPath: projectPixelShape,
-    filter: `
-      drop-shadow(
-        ${shadowSize}px
-        ${shadowSize}px
-        0
-        var(--theme-shadow)
-      )
-    `,
-  } satisfies CSSProperties;
+  const interactiveClass = interactive
+    ? "hover:-translate-y-1 hover:border-accent/40 hover:shadow-glow"
+    : "";
 
   return (
     <div
+      data-card
       className={`
-        relative isolate overflow-visible
+        group/card relative isolate
+        rounded-xl border bg-panel-secondary
+        transition-[translate,border-color,box-shadow] duration-200
+        ${expanded ? "border-accent/60" : "border-frame/15"}
+        ${shadowSize > 0 ? "shadow-soft" : ""}
+        ${interactiveClass}
         text-ink
         ${className}
       `}
     >
-      {/* Pixel border, background, and shadow */}
+      {/* Warm corner glow */}
       <div
         aria-hidden="true"
-        style={panelStyle}
         className={`
-          pointer-events-none
-          absolute inset-0 z-0
-          p-[2px]
-          ${expanded ? "bg-accent" : "bg-frame"}
+          card-glow pointer-events-none absolute inset-0 rounded-xl
+          transition-opacity duration-300
+          ${expanded ? "opacity-100" : "opacity-70 group-hover/card:opacity-100"}
         `}
-      >
-        <div
-          style={{ clipPath: projectPixelShape }}
-          className="h-full w-full bg-panel-secondary"
-        />
-      </div>
+      />
 
       {/* Top highlight */}
       <div
         aria-hidden="true"
         className="
-          pointer-events-none
-          absolute left-3 right-3 top-0.5 z-10
-          h-0.5 bg-panel-highlight/70
+          pointer-events-none absolute inset-0 rounded-xl
+          shadow-[inset_0_1px_0_var(--theme-panel-highlight)]
+          opacity-70
         "
       />
 
-      {/* Bottom shading */}
+      {/* Accent edge */}
       <div
         aria-hidden="true"
         className="
-          pointer-events-none
-          absolute bottom-0.5 left-3 right-3 z-10
-          h-0.5 bg-shadow/40
+          card-edge pointer-events-none absolute
+          -top-px left-6 right-6 h-0.5
+          rounded-full
         "
       />
 
-      <div className={`relative z-20 ${contentClassName}`}>{children}</div>
+      <div className={`relative ${contentClassName}`}>{children}</div>
     </div>
   );
 }

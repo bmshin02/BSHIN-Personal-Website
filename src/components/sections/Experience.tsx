@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { experiences } from "../../data/experiences";
-import PixelPanel from "../ui/PixelPanel";
+import Panel from "../ui/Panel";
 
 function Experience() {
   const [expandedJob, setExpandedJob] = useState<number | null>(null);
@@ -16,15 +16,18 @@ function Experience() {
       <div className="mx-auto max-w-7xl">
         {/* Section heading */}
         <div className="grid grid-cols-12 gap-8">
-          <PixelPanel
+          <Panel
             className="col-span-12 lg:col-start-3 lg:col-span-8"
             contentClassName="p-5 sm:p-6"
           >
             <header>
               <p
                 className="
+                  flex items-center gap-3
                   text-xs font-bold uppercase
                   tracking-[0.25em] text-accent
+                  before:h-0.5 before:w-6
+                  before:rounded-full before:bg-accent
                 "
               >
                 Experience
@@ -50,7 +53,7 @@ function Experience() {
                 experiences, and helped others learn technology.
               </p>
             </header>
-          </PixelPanel>
+          </Panel>
         </div>
 
         {/* Experience timeline */}
@@ -72,18 +75,29 @@ function Experience() {
                     lg:col-span-2 lg:block
                   "
                 >
-                  <p className="text-xs font-bold text-panel-highlight">
-                    {experience.date}
-                  </p>
-
-                  <p
+                  {/* Frosted label so the dates read on any background */}
+                  <div
                     className="
-                      mt-1 text-xs leading-4
-                      text-panel-highlight/70
+                      block w-full rounded-lg
+                      border border-frame/15
+                      bg-panel/85 px-3 py-2
+                      shadow-soft-sm backdrop-blur-sm
                     "
                   >
-                    {experience.location}
-                  </p>
+                    {/* Narrow columns wrap only after the dash */}
+                    <p className="text-xs font-bold text-ink">
+                      {experience.date.split(" – ").map((part, partIndex, parts) => (
+                        <span key={part} className="whitespace-nowrap">
+                          {part}
+                          {partIndex < parts.length - 1 ? " – " : ""}
+                        </span>
+                      ))}
+                    </p>
+
+                    <p className="mt-1 text-xs leading-4 text-muted">
+                      {experience.location}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Timeline and card */}
@@ -100,7 +114,7 @@ function Experience() {
                       className="
                         pointer-events-none absolute
                         -bottom-11 left-2 top-7
-                        border-l-2 border-dashed border-accent
+                        border-l-2 border-accent
                         lg:-left-6
                       "
                     />
@@ -112,15 +126,15 @@ function Experience() {
                     className="
                       pointer-events-none absolute
                       left-2 top-7 z-20
-                      flex h-5 w-5 -translate-x-1/2
+                      flex h-5 w-5 -translate-x-1/2 rounded-full
                       items-center justify-center
                       border-2 border-panel-highlight
                       bg-accent
-                      shadow-[2px_2px_0_var(--theme-shadow)]
+                      shadow-soft-sm
                       lg:-left-6
                     "
                   >
-                    <span className="h-1.5 w-1.5 bg-accent-text" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent-text" />
                   </div>
 
                   {/* Timeline connector */}
@@ -129,19 +143,15 @@ function Experience() {
                     className="
                       pointer-events-none absolute
                       left-2 top-[36px] z-0
-                      w-7 border-t-2 border-dashed border-accent
+                      w-7 border-t border-accent
                       lg:-left-6
                     "
                   />
 
-                  <PixelPanel
+                  <Panel
                     variant="secondary"
                     shadowSize={4}
-                    className="
-                      transition-transform duration-200
-                      hover:-translate-x-0.5
-                      hover:-translate-y-0.5
-                    "
+                    interactive
                     contentClassName="overflow-hidden"
                   >
                     {/* Collapsed job summary */}
@@ -198,13 +208,13 @@ function Experience() {
                           className={`
                             flex h-8 w-8 shrink-0
                             items-center justify-center
-                            border-2 border-frame
+                            rounded-lg border border-frame/20
                             bg-panel text-sm font-bold text-accent
-                            shadow-[2px_2px_0_var(--theme-shadow)]
+                            shadow-soft-sm
                             transition duration-300
                             ${
                               isExpanded
-                                ? "translate-x-0.5 translate-y-0.5 rotate-180 shadow-none"
+                                ? "rotate-180"
                                 : ""
                             }
                           `}
@@ -223,10 +233,13 @@ function Experience() {
                           <span
                             key={technology}
                             className="
-                              border border-frame
+                              rounded-md border border-frame/25
                               bg-panel px-2 py-1
                               text-[10px] font-bold text-ink
-                              shadow-[1px_1px_0_var(--theme-shadow)]
+                              tag-pop
+                              shadow-soft-sm
+                              hover:bg-panel-highlight
+                              hover:text-accent
                             "
                           >
                             {technology}
@@ -256,8 +269,8 @@ function Experience() {
                       <div className="overflow-hidden">
                         <div
                           className="
-                            border-t-2 border-dashed
-                            border-divider/50
+                            border-t
+                            border-divider/25
                             px-4 pb-5 pt-4
                             sm:px-5
                           "
@@ -285,9 +298,9 @@ function Experience() {
                                   <span
                                     aria-hidden="true"
                                     className="
-                                      mt-2.5 h-1.5 w-1.5
+                                      mt-2.5 h-1.5 w-1.5 rounded-full
                                       shrink-0 bg-accent
-                                      shadow-[1px_1px_0_var(--theme-shadow)]
+                                      shadow-soft-sm
                                     "
                                   />
 
@@ -310,9 +323,9 @@ function Experience() {
                                   loading="lazy"
                                   className="
                                       aspect-video w-full object-cover
-                                      border-2 border-frame
+                                      rounded-lg border border-frame/20
                                       bg-panel
-                                      shadow-[3px_3px_0_var(--theme-shadow)]
+                                      shadow-soft-sm
                                     "
                                 />
                               ))}
@@ -326,9 +339,9 @@ function Experience() {
                               preload="metadata"
                               className="
                                 mt-4 aspect-video w-full
-                                border-2 border-frame
+                                rounded-lg border border-frame/20
                                 bg-frame
-                                shadow-[3px_3px_0_var(--theme-shadow)]
+                                shadow-soft-sm
                               "
                             >
                               <source src={experience.video} type="video/mp4" />
@@ -346,17 +359,15 @@ function Experience() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="
-                                    border-2 border-frame
+                                    rounded-lg border border-frame/20
                                     bg-accent px-3 py-1.5
                                     text-xs font-bold text-accent-text
-                                    shadow-[3px_3px_0_var(--theme-shadow)]
+                                    shadow-soft-sm
                                     transition duration-150
-                                    hover:-translate-x-0.5
                                     hover:-translate-y-0.5
                                     hover:bg-accent-hover
-                                    active:translate-x-0.5
-                                    active:translate-y-0.5
-                                    active:shadow-none
+                                    active:translate-y-px
+                                    active:shadow-soft-sm
                                   "
                                 >
                                   {link.label}
@@ -376,7 +387,7 @@ function Experience() {
                         </div>
                       </div>
                     </div>
-                  </PixelPanel>
+                  </Panel>
                 </div>
               </article>
             );

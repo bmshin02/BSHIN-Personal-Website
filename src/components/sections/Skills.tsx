@@ -1,5 +1,5 @@
 import { skillGroups } from "../../data/skills";
-import PixelPanel from "../ui/PixelPanel";
+import Panel from "../ui/Panel";
 
 function Skills() {
   return (
@@ -7,12 +7,12 @@ function Skills() {
       <div className="mx-auto max-w-7xl">
         {/* Section heading */}
         <div className="grid grid-cols-12 gap-8">
-          <PixelPanel
+          <Panel
             className="col-span-12 lg:col-start-3 lg:col-span-8"
             contentClassName="p-5 sm:p-6"
           >
             <header>
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-accent sm:text-sm">
+              <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.25em] text-accent before:h-0.5 before:w-6 before:rounded-full before:bg-accent sm:text-sm">
                 Skills
               </p>
 
@@ -25,9 +25,9 @@ function Skills() {
                 interactive experiences, and software tools.
               </p>
 
-              <div className="mt-4 border-t-2 border-dashed border-divider/50" />
+              <div className="mt-4 h-px bg-linear-to-r from-accent/60 via-divider/25 to-transparent" />
             </header>
-          </PixelPanel>
+          </Panel>
         </div>
 
         {/* Compact skill groups */}
@@ -40,13 +40,12 @@ function Skills() {
             "
           >
             {skillGroups.map((group) => (
-              <PixelPanel
+              <Panel
                 key={group.title}
                 variant="secondary"
                 shadowSize={0}
                 className="
                   transition-transform duration-200
-                  hover:-translate-x-0.5
                   hover:-translate-y-0.5
                 "
                 contentClassName="p-4"
@@ -55,10 +54,10 @@ function Skills() {
                   <span
                     aria-hidden="true"
                     className="
-                      h-3 w-3 shrink-0
-                      border border-frame
+                      h-3 w-3 rounded-full shrink-0
+                      border border-frame/25
                       bg-accent
-                      shadow-[2px_2px_0_var(--theme-shadow)]
+                      shadow-soft-sm
                     "
                   />
 
@@ -72,13 +71,11 @@ function Skills() {
                     <span
                       key={skill}
                       className="
-                        border border-frame
+                        rounded-md border border-frame/25
                         bg-panel px-2 py-1
                         text-[10px] font-bold text-ink
-                        shadow-[1px_1px_0_var(--theme-shadow)]
-                        transition duration-150
-                        hover:-translate-x-0.5
-                        hover:-translate-y-0.5
+                        tag-pop
+                        shadow-soft-sm
                         hover:bg-panel-highlight
                         hover:text-accent
                         sm:text-[11px]
@@ -88,7 +85,7 @@ function Skills() {
                     </span>
                   ))}
                 </div>
-              </PixelPanel>
+              </Panel>
             ))}
           </div>
         </div>

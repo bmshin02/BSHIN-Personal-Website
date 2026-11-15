@@ -1,5 +1,5 @@
 import type { IconType } from "react-icons";
-import { FaFileAlt, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaEnvelope, FaFileAlt, FaGithub, FaLinkedin } from "react-icons/fa";
 
 export type SocialLink = {
   label: string;
@@ -25,6 +25,7 @@ export const socialLinks: SocialLink[] = [
   {
     label: "Email",
     href: "mailto:bmshin02@gmail.com",
+    icon: FaEnvelope,
     external: false,
     displayText: "bmshin02@gmail.com",
   },
