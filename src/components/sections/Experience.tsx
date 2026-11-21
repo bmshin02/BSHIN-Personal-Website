@@ -15,7 +15,7 @@ function Experience() {
     <section id="experience" className="scroll-mt-16 px-6 py-8">
       <div className="mx-auto max-w-7xl">
         {/* Section heading */}
-        <div className="grid grid-cols-12 gap-8">
+        <div className="grid grid-cols-12 gap-x-4 gap-y-8 sm:gap-x-8">
           <Panel
             className="col-span-12 lg:col-start-3 lg:col-span-8"
             contentClassName="p-5 sm:p-6"
@@ -35,8 +35,8 @@ function Experience() {
 
               <h2
                 className="
-                  mt-2 text-2xl font-bold text-ink
-                  sm:text-3xl
+                  mt-2 text-3xl font-pixel font-normal text-ink
+                  sm:text-4xl
                 "
               >
                 Work experience
@@ -66,7 +66,7 @@ function Experience() {
             return (
               <article
                 key={`${experience.company}-${experience.role}`}
-                className="grid grid-cols-12 gap-8"
+                className="grid grid-cols-12 gap-x-4 gap-y-8 sm:gap-x-8"
               >
                 {/* Desktop date and location */}
                 <div
@@ -191,7 +191,7 @@ function Experience() {
                         <div className="min-w-0">
                           <h3
                             className="
-                              text-lg font-bold leading-6
+                              text-xl font-pixel font-normal leading-6
                               text-ink
                             "
                           >
@@ -275,40 +275,48 @@ function Experience() {
                             sm:px-5
                           "
                         >
-                          {/* Responsibilities */}
-                          <h4
-                            className="
-                              text-xs font-bold uppercase
-                              tracking-[0.18em] text-ink
-                            "
-                          >
-                            Highlights
-                          </h4>
+                          {/* Responsibilities, then any other roles held at the same place */}
+                          {[
+                            { title: "Highlights", items: experience.responsibilities },
+                            ...(experience.otherRoles ?? []).map((otherRole) => ({
+                              title: otherRole.role,
+                              items: otherRole.responsibilities,
+                            })),
+                          ].map((group, groupIndex) => (
+                            <div key={group.title} className={groupIndex > 0 ? "mt-5" : undefined}>
+                              <h4
+                                className="
+                                  text-xs font-bold uppercase
+                                  tracking-[0.18em] text-ink
+                                "
+                              >
+                                {group.title}
+                              </h4>
 
-                          <ul className="mt-3 space-y-2">
-                            {experience.responsibilities.map(
-                              (responsibility) => (
-                                <li
-                                  key={responsibility}
-                                  className="
-                                    flex gap-2
-                                    text-sm leading-6 text-muted
-                                  "
-                                >
-                                  <span
-                                    aria-hidden="true"
+                              <ul className="mt-3 space-y-2">
+                                {group.items.map((responsibility) => (
+                                  <li
+                                    key={responsibility}
                                     className="
-                                      mt-2.5 h-1.5 w-1.5 rounded-full
-                                      shrink-0 bg-accent
-                                      shadow-soft-sm
+                                      flex gap-2
+                                      text-sm leading-6 text-muted
                                     "
-                                  />
+                                  >
+                                    <span
+                                      aria-hidden="true"
+                                      className="
+                                        mt-2.5 h-1.5 w-1.5 rounded-full
+                                        shrink-0 bg-accent
+                                        shadow-soft-sm
+                                      "
+                                    />
 
-                                  <span>{responsibility}</span>
-                                </li>
-                              ),
-                            )}
-                          </ul>
+                                    <span>{responsibility}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
 
                           {/* Photos */}
                           {experience.photos.length > 0 && (

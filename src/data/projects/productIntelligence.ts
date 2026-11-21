@@ -7,23 +7,23 @@ export const productIntelligence: Project = {
   title: "Product Sentiment Analyzer",
 
   shortDescription:
-    "A full-stack product research platform that transforms Reddit discussions into structured insights about customer opinions, recurring complaints, and product trends.",
+    "A full-stack app that turns Reddit discussions into what people like and dislike about products.",
 
   description:
     "Product Sentiment Analyzer is a full-stack application designed to help users understand what people are saying about products online. " +
     "Currently, the platform processes discussion data, cleans and analyzes the text on Reddit, and presents recurring words and phrases through an accessible dashboard. " +
     "The project is being developed incrementally, with planned capabilities including sentiment analysis, topic extraction, semantic search, product comparison, and AI-generated summaries.",
 
-  image: "/images/projects/productintelligence/cover.png",
+  image: "/images/projects/productintelligence/cover.webp",
 
   imageAlt:
     "Product Sentiment Analyzer dashboard displaying insights from Reddit product discussions",
 
-  gallery: ["/images/projects/productintelligence/pic1.png"],
+  gallery: ["/images/projects/productintelligence/pic1.webp"],
 
   category: "Web App",
 
-  date: "Aug. 2026 – Present",
+  date: "Jul. 2026 – Present",
 
   status: "in-progress",
 

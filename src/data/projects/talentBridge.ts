@@ -14,16 +14,16 @@ export const talentBridge: Project = {
     "Students onboard and get matched to projects, and organizations review applicants and form teams. " +
     "I built it with a four-person team at OCC Hacks 2026, where I led the frontend and UI/UX.",
 
-  image: "/images/projects/talent-bridge/cover.jpg",
+  image: "/images/projects/talent-bridge/cover.webp",
 
   imageAlt:
     "Talent Bridge landing page with the headline Local challenges, meet local talent",
 
   gallery: [
-    "/images/projects/talent-bridge/pic1.png",
-    "/images/projects/talent-bridge/pic2.png",
-    "/images/projects/talent-bridge/pic3.png",
-    "/images/projects/talent-bridge/pic4.png",
+    "/images/projects/talent-bridge/pic1.webp",
+    "/images/projects/talent-bridge/pic2.webp",
+    "/images/projects/talent-bridge/pic3.webp",
+    "/images/projects/talent-bridge/pic4.webp",
   ],
 
   category: "Web App",
@@ -73,6 +73,7 @@ export const talentBridge: Project = {
   ],
 
   results: [
+    "Fixed a bad merge that kept the backend from starting and restored a teammate's lost fix.",
     "Shipped the full React/TypeScript frontend for the team's hackathon demo.",
 
     "Refactored the codebase to the new code style with all 21 backend tests still passing.",

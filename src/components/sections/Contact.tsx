@@ -94,9 +94,8 @@ function Contact() {
             <h2
               className="
                 max-w-2xl
-                text-3xl font-extrabold leading-[1.1]
-                tracking-tight text-ink
-                sm:text-4xl
+                text-4xl font-pixel font-normal leading-[1.1] text-ink
+                sm:text-5xl
               "
             >
               Have something interesting in mind?

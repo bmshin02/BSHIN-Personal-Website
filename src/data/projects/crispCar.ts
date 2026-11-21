@@ -4,37 +4,37 @@ export const crispCar: Project = {
   id: "crispcar",
   slug: "crispcar",
 
-  title: "Crisp Car (Autonomous Car)",
+  title: "CRISP Autonomous Car",
 
   shortDescription:
-    "A miniature autonomous vehicle that uses computer vision to follow lanes, recognize traffic signs, and make real-time navigation decisions.",
+    "A self-driving Raspberry Pi car that stops at red lights and reads speed-limit signs.",
 
   description:
     "A senior design project developed alongside three teammates to build a miniature autonomous vehicle capable of navigating a roadway using computer vision. " +
     "The vehicle processes camera input in real time to identify lane markings, recognize traffic signs, and determine how it should respond to its environment. " +
     "The project combined computer vision, autonomous navigation, and software-controlled vehicle behavior into a complete real-time system.",
 
-  image: "/images/projects/crispcar/cover.png",
+  image: "/images/projects/crispcar/cover.webp",
 
   imageAlt: "Miniature autonomous line-following car developed using OpenCV",
 
   gallery: [
-    "/images/projects/crispcar/pic1.png",
-    "/images/projects/crispcar/pic2.png",
+    "/images/projects/crispcar/pic1.webp",
+    "/images/projects/crispcar/pic2.webp",
   ],
 
   category: "Embedded Systems",
 
-  date: "Sep. 2024 - Mar. 2025",
+  date: "Sep. 2024 – Mar. 2025",
 
   status: "completed",
 
   technologies: [
+    "Python",
     "OpenCV",
+    "Tesseract OCR",
+    "Raspberry Pi",
     "Computer Vision",
-    "Object Detection",
-    "Autonomous Navigation",
-    "Image Processing",
   ],
 
   featured: false,
@@ -54,21 +54,10 @@ export const crispCar: Project = {
     "These systems were integrated with the vehicle's navigation logic to create a real-time feedback loop between visual perception and autonomous movement.",
 
   features: [
-    "Real-time camera processing using OpenCV",
-
-    "Lane and line detection for autonomous path following",
-
-    "Traffic sign recognition using computer vision",
-
-    "Navigation logic that converts visual information into vehicle movement",
-
-    "Real-time steering adjustments based on the vehicle's position relative to the roadway",
-
-    "Traffic-rule behavior triggered by recognized road signs",
-
-    "Integrated perception and navigation system for autonomous driving",
-
-    "Collaborative development across a four-person engineering team",
+    "Red and green light detection with OpenCV, so the car stops and starts on its own.",
+    "Speed-limit sign reading with Tesseract OCR to switch between three speeds.",
+    "Steering that keeps the car on the line.",
+    "Detection tuned on a real track to cut false alarms.",
   ],
 
   challenges: [

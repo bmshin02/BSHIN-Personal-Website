@@ -181,9 +181,27 @@ function compileShader(
   return shader;
 }
 
+/*
+ * Use the shader only with a real GPU. Without one, the browser draws WebGL
+ * on the CPU (SwiftShader, llvmpipe), which blocks the page for seconds on
+ * slower devices, so the CSS fallback is used instead.
+ */
 function supportsWebGL() {
   try {
-    return Boolean(document.createElement("canvas").getContext("webgl"));
+    const gl = document.createElement("canvas").getContext("webgl");
+
+    if (!gl) {
+      return false;
+    }
+
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    const renderer = info
+      ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL))
+      : "";
+
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+
+    return !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
   } catch {
     return false;
   }

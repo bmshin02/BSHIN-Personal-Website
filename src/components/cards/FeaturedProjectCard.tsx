@@ -25,7 +25,7 @@ function FeaturedProjectCard({
       className="group h-full"
       contentClassName="h-full"
     >
-      <article className="flex h-full flex-col p-4 sm:p-5">
+      <article className="flex h-full flex-col p-4 sm:p-5 short:p-4">
         {/*
          * Project image: clicking it opens the case study. It is skipped
          * by the keyboard because the "View case study" button does the same.
@@ -48,13 +48,13 @@ function FeaturedProjectCard({
               alt=""
               loading="lazy"
               className="
-                aspect-video w-full object-cover
+                aspect-video w-full object-cover short:aspect-[2/1]
                 transition-transform duration-500
                 group-hover:scale-[1.04]
               "
             />
           ) : (
-            <div className="aspect-video w-full" />
+            <div className="aspect-video w-full short:aspect-[2/1]" />
           )}
 
           {/* Soft shading so the badge reads on any image */}
@@ -96,7 +96,7 @@ function FeaturedProjectCard({
         </button>
 
         {/* Category, winner, and date */}
-        <div className="mt-4 flex min-h-6 flex-wrap items-center justify-between gap-2">
+        <div className="mt-4 flex min-h-6 flex-wrap short:mt-3 items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <span
               className="
@@ -121,8 +121,8 @@ function FeaturedProjectCard({
         {/* Project title */}
         <h3
           className="
-            mt-3 line-clamp-2
-            text-xl font-bold leading-7 tracking-tight
+            mt-3 line-clamp-2 short:mt-2
+            text-2xl font-pixel font-normal leading-7
             text-ink
             transition-colors duration-200
             group-hover:text-accent
@@ -136,6 +136,7 @@ function FeaturedProjectCard({
           className="
             mt-2 md:min-h-[4.5rem]
             line-clamp-3
+            short:line-clamp-2 short:md:min-h-[3rem]
             text-sm leading-6 text-muted
           "
         >
@@ -143,16 +144,18 @@ function FeaturedProjectCard({
         </p>
 
         {/* Technologies and actions */}
-        <div className="mt-auto pt-4">
-          {/* Room for two rows of tags keeps the cards' buttons aligned */}
-          <div className="md:min-h-[3.75rem]">
-            <TechnologyTags technologies={project.technologies} limit={4} />
-          </div>
+        <div className="mt-auto pt-4 short:pt-3">
+          <TechnologyTags
+            technologies={project.technologies}
+            limit={3}
+            singleRow
+          />
 
           <div
             className="
               mt-4 flex items-center gap-2
               border-t border-divider/25 pt-4
+              short:mt-3 short:pt-3
             "
           >
             <button

@@ -1,4 +1,6 @@
 import {
+  lazy,
+  Suspense,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -13,9 +15,31 @@ import type { Project } from "../../data/projects";
 
 import FeaturedProjectCard from "../cards/FeaturedProjectCard";
 import ProjectArchiveRow from "../cards/ProjectArchiveRow";
-import ProjectDetailPanel from "../panels/ProjectDetailPanel";
 import Panel from "../ui/Panel";
 import ProjectPanel from "../ui/ProjectPanel";
+
+/*
+ * The case study view loads in its own chunk, so the first page load stays
+ * small. It's fetched once the browser is idle, so opening a project is
+ * still instant.
+ */
+const loadProjectDetailPanel = () => import("../panels/ProjectDetailPanel");
+const ProjectDetailPanel = lazy(loadProjectDetailPanel);
+
+if (typeof window !== "undefined") {
+  const preload = () => void loadProjectDetailPanel();
+  window.addEventListener(
+    "load",
+    () => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(preload, { timeout: 4000 });
+      } else {
+        setTimeout(preload, 2000);
+      }
+    },
+    { once: true },
+  );
+}
 
 type ProjectsView = "featured" | "all";
 
@@ -185,7 +209,7 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
       }
       className="
         isolate scroll-mt-16
-        overflow-hidden px-6 py-10
+        overflow-hidden px-6 py-10 short:py-6
       "
     >
       {/* Case study transition viewport */}
@@ -219,30 +243,22 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
           >
             <div className="mx-auto max-w-7xl">
               {/* Heading */}
-              <div className="grid grid-cols-12 gap-8">
+              <div className="grid grid-cols-12 gap-x-4 gap-y-8 sm:gap-x-8">
                 <Panel
                   className="col-span-12 lg:col-start-3 lg:col-span-8"
-                  contentClassName="p-5 sm:p-6"
+                  contentClassName="p-5 sm:p-6 short:py-4"
                 >
                   <header>
                     <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.25em] text-accent before:h-0.5 before:w-6 before:rounded-full before:bg-accent sm:text-sm">
                       Projects
                     </p>
 
-                    <div className="mt-2 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <h2 className="text-2xl font-bold text-ink sm:text-3xl">
-                          {projectsView === "featured"
-                            ? "Featured work"
-                            : "Project archive"}
-                        </h2>
-
-                        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted sm:text-base">
-                          {projectsView === "featured"
-                            ? "A selection of projects that best represent my work in software, games, and interactive technology."
-                            : "Browse my complete collection of applications, games, educational experiences, and software projects."}
-                        </p>
-                      </div>
+                    <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <h2 className="text-3xl font-pixel font-normal text-ink sm:text-4xl">
+                        {projectsView === "featured"
+                          ? "Featured work"
+                          : "Project archive"}
+                      </h2>
 
                       <div className="flex shrink-0 gap-2">
                         <button
@@ -295,7 +311,11 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                       </div>
                     </div>
 
-                    <div className="mt-5 h-px bg-linear-to-r from-accent/60 via-divider/25 to-transparent" />
+                    <p className="mt-3 max-w-3xl text-sm leading-6 text-muted sm:text-base short:mt-2 short:text-sm">
+                      {projectsView === "featured"
+                        ? "A selection of projects that best represent my work in software, games, and interactive technology."
+                        : "Browse my complete collection of applications, games, educational experiences, and software projects."}
+                    </p>
 
                     {projectsView === "all" && (
                       <div className="mt-5">
@@ -344,7 +364,7 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
               {/* Featured projects */}
               {projectsView === "featured" && (
                 <>
-                  <div className="mt-7 grid grid-cols-12 gap-8">
+                  <div className="mt-6 grid grid-cols-12 gap-x-4 gap-y-8 sm:gap-x-8 short:mt-4">
                     <div
                       className={`
                   col-span-12 grid items-stretch gap-5
@@ -373,7 +393,8 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                     </div>
                   </div>
 
-                  <div className="mt-8 flex justify-center">
+                  {/* Hidden on short screens: "All projects" in the heading does the same */}
+                  <div className="mt-8 flex justify-center short:hidden">
                     <button
                       type="button"
                       onClick={() => handleViewChange("all")}
@@ -414,7 +435,7 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
               {/* Project archive */}
               {projectsView === "all" && (
                 <>
-                  <div className="mt-7 grid grid-cols-12 gap-8">
+                  <div className="mt-7 grid grid-cols-12 gap-x-4 gap-y-8 sm:gap-x-8">
                     <div className="col-span-12 space-y-4 lg:col-start-3 lg:col-span-8">
                       {filteredProjects.map((project) => (
                         <ProjectArchiveRow
@@ -477,13 +498,15 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
           >
             <div className="mx-auto max-w-7xl">
               {displayedProject && (
-                <ProjectDetailPanel
-                  key={displayedProject.id}
-                  project={displayedProject}
-                  allProjects={projects}
-                  onBack={handleCloseProject}
-                  onOpenProject={handleOpenProject}
-                />
+                <Suspense fallback={null}>
+                  <ProjectDetailPanel
+                    key={displayedProject.id}
+                    project={displayedProject}
+                    allProjects={projects}
+                    onBack={handleCloseProject}
+                    onOpenProject={handleOpenProject}
+                  />
+                </Suspense>
               )}
             </div>
           </div>

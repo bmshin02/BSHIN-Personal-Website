@@ -1,9 +1,15 @@
 type TechnologyTagsProps = {
   technologies: string[];
   limit?: number;
+  /* Keep the tags on one row, clipping any that don't fit. */
+  singleRow?: boolean;
 };
 
-function TechnologyTags({ technologies, limit }: TechnologyTagsProps) {
+function TechnologyTags({
+  technologies,
+  limit,
+  singleRow = false,
+}: TechnologyTagsProps) {
   const visibleTechnologies =
     limit === undefined ? technologies : technologies.slice(0, limit);
 
@@ -11,12 +17,14 @@ function TechnologyTags({ technologies, limit }: TechnologyTagsProps) {
     limit === undefined ? 0 : Math.max(technologies.length - limit, 0);
 
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div
+      className={`flex gap-1.5 ${singleRow ? "flex-nowrap overflow-hidden" : "flex-wrap"}`}
+    >
       {visibleTechnologies.map((technology) => (
         <span
           key={technology}
           className="
-            rounded-md border border-accent/25
+            shrink-0 rounded-md border border-accent/25
             bg-accent/8 px-2 py-1
             text-[10px] font-bold text-ink
             tag-pop
@@ -28,7 +36,7 @@ function TechnologyTags({ technologies, limit }: TechnologyTagsProps) {
       ))}
 
       {remainingCount > 0 && (
-        <span className="flex items-center px-1 py-1 text-[10px] font-bold text-muted">
+        <span className="flex shrink-0 items-center px-1 py-1 text-[10px] font-bold text-muted">
           +{remainingCount}
         </span>
       )}

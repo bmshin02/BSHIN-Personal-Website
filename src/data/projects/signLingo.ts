@@ -14,16 +14,16 @@ export const signLingo: Project = {
     "Learn Letters mode shows each sign and tells you when you've got it right, and Spell Words mode has you fingerspell whole words. " +
     "I mentored the three-student team that built it at ZotHack 2026, where it won Best Overall.",
 
-  image: "/images/projects/signlingo/cover.jpg",
+  image: "/images/projects/signlingo/cover.webp",
 
   imageAlt:
     "The SignLingo team and their mentor holding the headphones they won at ZotHack 2026",
 
   gallery: [
-    "/images/projects/signlingo/pic4.png",
-    "/images/projects/signlingo/pic1.jpg",
-    "/images/projects/signlingo/pic2.jpg",
-    "/images/projects/signlingo/pic3.png",
+    "/images/projects/signlingo/pic4.webp",
+    "/images/projects/signlingo/pic1.webp",
+    "/images/projects/signlingo/pic2.webp",
+    "/images/projects/signlingo/pic3.webp",
   ],
 
   category: "App",

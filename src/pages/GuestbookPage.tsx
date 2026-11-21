@@ -6,7 +6,7 @@ function GuestbookPage() {
           Guestbook
         </p>
 
-        <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-6xl">
+        <h1 className="mt-4 text-5xl font-pixel font-normal sm:text-7xl">
           Leave a message
         </h1>
 

@@ -75,7 +75,7 @@ function ProjectArchiveRow({
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base font-bold text-ink transition-colors duration-200 group-hover:text-accent sm:text-lg">
+            <h3 className="text-lg font-pixel font-normal text-ink transition-colors duration-200 group-hover:text-accent sm:text-xl">
               {project.title}
             </h3>
 

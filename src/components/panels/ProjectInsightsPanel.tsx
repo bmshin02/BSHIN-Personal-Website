@@ -88,7 +88,7 @@ function ProjectInsightsPanel({
             Breakdown
           </p>
 
-          <h3 className="mt-2 text-2xl font-bold tracking-tight text-ink">
+          <h3 className="mt-2 text-3xl font-pixel font-normal text-ink">
             What went into it
           </h3>
         </div>

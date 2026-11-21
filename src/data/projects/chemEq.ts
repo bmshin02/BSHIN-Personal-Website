@@ -7,14 +7,14 @@ export const chemEq: Project = {
   title: "ChemEQ",
 
   shortDescription:
-    "An interactive chemistry learning application that helps students visualize dynamic equilibrium through real-time molecular simulations.",
+    "A live chemistry simulation where students change conditions and watch a reaction respond, used by 50+ students.",
 
   description:
     "ChemEQ is an interactive educational application developed to help undergraduate chemistry students better understand dynamic chemical equilibrium. " +
     "The application visualizes the equilibrium between NO₂ and N₂O₄ and allows students to manipulate conditions such as concentration, temperature, and pressure. " +
     "As these variables change, students receive visual feedback showing how the chemical system responds, making an abstract chemistry concept easier to explore and understand.",
 
-  image: "/images/projects/chemeq/cover.png",
+  image: "/images/projects/chemeq/cover.webp",
 
   imageAlt:
     "ChemEQ educational chemistry application demonstrating dynamic equilibrium",
@@ -36,7 +36,7 @@ export const chemEq: Project = {
     "Interactive Simulation",
   ],
 
-  featured: true,
+  featured: false,
 
   role: "My responsibilities included programming interactive systems in Unity, implementing the student interface, creating visual feedback for chemical reactions, testing the application, and refining the experience based on classroom needs.",
 
@@ -80,6 +80,7 @@ export const chemEq: Project = {
   ],
 
   results: [
+    "Fixed physics bugs and improved speed after classroom testing so it ran smoothly on student devices",
     "Developed an interactive educational application used by more than 50 students across approximately two years",
 
     "Supported undergraduate chemistry instruction and educational demonstrations through interactive visualization",

@@ -174,7 +174,8 @@ function DotGrid({
     }
 
     const rect = container.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    /* Capped at 2: the dots are tiny, and 3x screens would triple the pixels drawn each frame. */
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     canvas.width = Math.round(rect.width * dpr);
     canvas.height = Math.round(rect.height * dpr);

@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useRef,
   useState,
   type HTMLAttributes,
   type ReactNode,
@@ -25,7 +26,7 @@ function shortRole(role: string) {
 function buildScript(): TerminalLine[] {
   const lines: TerminalLine[] = [
     { kind: "command", text: "whoami" },
-    { kind: "output", text: "Software developer · California" },
+    { kind: "output", text: "Brandon Shin · Irvine, CA" },
   ];
 
   const currentJob = experiences.find((item) => /present/i.test(item.date));
@@ -93,14 +94,55 @@ type TerminalCardProps = {
   footer?: ReactNode;
   /* Extra props for the title bar, such as drag handlers. */
   barProps?: HTMLAttributes<HTMLDivElement>;
+  /* Called once when the script has finished typing (right away if it doesn't animate). */
+  onDone?: () => void;
+  /* Typed at the waiting prompt, such as the command for a hovered button. */
+  promptCommand?: string;
 };
+
+const PROMPT_CHAR_DELAY = 22;
+
+/*
+ * The waiting prompt. It types promptCommand when one is given.
+ * Keyed by the command, so a new command starts typing from scratch.
+ */
+function PromptLine({ command }: { command: string }) {
+  const [chars, setChars] = useState(() =>
+    prefersReducedMotion() ? command.length : 0,
+  );
+
+  useEffect(() => {
+    if (chars >= command.length) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => setChars(chars + 1), PROMPT_CHAR_DELAY);
+
+    return () => window.clearTimeout(timer);
+  }, [chars, command]);
+
+  return (
+    <>
+      <span className="text-[var(--term-prompt)]">$ </span>
+      <span className="text-[var(--term-ink)]">{command.slice(0, chars)}</span>
+      <span className="term-caret term-caret-blink" />
+    </>
+  );
+}
 
 /*
  * A small terminal window that types a short intro.
  * Every line keeps its space from the start, so nothing jumps
  * while it types. Screen readers get the full text at once.
  */
-function TerminalCard({ animate, title, footer, barProps }: TerminalCardProps) {
+function TerminalCard({
+  animate,
+  title,
+  footer,
+  barProps,
+  onDone,
+  promptCommand = "",
+}: TerminalCardProps) {
   const { className: barClassName = "", ...barRest } = barProps ?? {};
 
   const [progress, setProgress] = useState<Progress>(() =>
@@ -108,6 +150,19 @@ function TerminalCard({ animate, title, footer, barProps }: TerminalCardProps) {
   );
 
   const isDone = progress.line >= script.length;
+
+  /* Tell the parent once typing is finished. */
+  const onDoneRef = useRef(onDone);
+
+  useEffect(() => {
+    onDoneRef.current = onDone;
+  }, [onDone]);
+
+  useEffect(() => {
+    if (isDone) {
+      onDoneRef.current?.();
+    }
+  }, [isDone]);
 
   useEffect(() => {
     if (isDone) {
@@ -223,9 +278,8 @@ function TerminalCard({ animate, title, footer, barProps }: TerminalCardProps) {
         })}
 
         {/* Waiting prompt once the script has finished */}
-        <p className={`mt-1.5 ${isDone ? "" : "invisible"}`}>
-          <span className="text-[var(--term-prompt)]">$ </span>
-          <span className="term-caret term-caret-blink" />
+        <p className={`mt-1.5 truncate ${isDone ? "" : "invisible"}`}>
+          <PromptLine key={isDone ? promptCommand : ""} command={isDone ? promptCommand : ""} />
         </p>
       </div>
 

@@ -13,7 +13,7 @@ export const rhythmPlus: Project = {
     "Rhythm Plus is a class project where I developed a physical version of a tile-based rhythm game using Arduino and software engineering fundamentals. " +
     "The project focused on designing responsive game logic, managing player input, coordinating timing-based events, and integrating software behavior with physical hardware.",
 
-  image: "/images/projects/rhythmplus/cover.png",
+  image: "/images/projects/rhythmplus/cover.webp",
 
   imageAlt: "Rhythm Plus physical Arduino rhythm game",
 

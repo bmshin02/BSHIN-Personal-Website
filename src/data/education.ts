@@ -13,7 +13,7 @@ export const education: EducationItem[] = [
   {
     school: "University of California, Irvine",
     degree: "Master of Software Engineering",
-    date: "2026 – Expected 2027",
+    date: "Sep 2026 – Dec 2027",
     location: "Irvine, California",
     status: "Current Student",
     description:
@@ -28,7 +28,7 @@ export const education: EducationItem[] = [
   {
     school: "University of California, Riverside",
     degree: "Bachelor of Science in Computer Science",
-    date: "Graduated 2025",
+    date: "Sep 2021 – Jun 2025",
     location: "Riverside, California",
     description:
       "Completed a computer science degree with experience in software engineering, algorithms, databases, computer vision, web development, and interactive application development.",

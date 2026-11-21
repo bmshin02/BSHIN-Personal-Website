@@ -160,7 +160,7 @@ function ProjectDetailPanel({
             <Eyebrow>Case study</Eyebrow>
 
             <div className="mt-4 flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
-              <h2 className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+              <h2 className="text-4xl font-pixel font-normal text-ink sm:text-5xl">
                 {project.title}
               </h2>
 
@@ -236,7 +236,7 @@ function ProjectDetailPanel({
           <Panel contentClassName="p-5 sm:p-6">
             <Eyebrow>{hasVideo ? "Demo" : "Preview"}</Eyebrow>
 
-            <h3 className="mt-2 text-2xl font-bold tracking-tight text-ink">
+            <h3 className="mt-2 text-3xl font-pixel font-normal text-ink">
               {hasVideo ? "See it in action" : "A look at the project"}
             </h3>
 
@@ -278,7 +278,7 @@ function ProjectDetailPanel({
           <Panel contentClassName="p-5 sm:p-8">
             <Eyebrow>Overview</Eyebrow>
 
-            <h3 className="mt-2 text-2xl font-bold tracking-tight text-ink">
+            <h3 className="mt-2 text-3xl font-pixel font-normal text-ink">
               Why I built it and how
             </h3>
 
@@ -323,7 +323,7 @@ function ProjectDetailPanel({
               <div>
                 <Eyebrow>Gallery</Eyebrow>
 
-                <h3 className="mt-2 text-2xl font-bold tracking-tight text-ink">
+                <h3 className="mt-2 text-3xl font-pixel font-normal text-ink">
                   Screenshots
                 </h3>
               </div>

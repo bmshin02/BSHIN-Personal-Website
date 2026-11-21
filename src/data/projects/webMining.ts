@@ -7,20 +7,20 @@ export const webMining: Project = {
   title: "Webmining",
 
   shortDescription:
-    "A Roblox mining game where players mine mutated rocks and sell.",
+    "A solo-built Roblox mining game with a weather system shared across all servers that changes resource values.",
 
   description:
     "A progression-focused Roblox mining game where players explore the world, mine dynamically spawned rock nodes, and collect Shards with unique mutations. A synchronized global weather system causes the same weather event to occur across every active server, changing the appearance and properties of available resources. Players combine their Shards into Geodes that inherit existing mutations and can develop new ones from specific mutation combinations. The resulting Gems can be collected or sold for Rupees, encouraging players to continue searching for increasingly rare and valuable combinations.",
 
-  image: "/images/projects/webmining/coverwebmining.png",
+  image: "/images/projects/webmining/coverwebmining.webp",
 
   imageAlt: "webmining image",
 
   gallery: [
-    "/images/projects/webmining/pic1.png",
-    "/images/projects/webmining/pic2.png",
-    "/images/projects/webmining/pic3.png",
-    "/images/projects/webmining/pic4.png",
+    "/images/projects/webmining/pic1.webp",
+    "/images/projects/webmining/pic2.webp",
+    "/images/projects/webmining/pic3.webp",
+    "/images/projects/webmining/pic4.webp",
   ],
 
   category: "Game",

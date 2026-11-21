@@ -6,7 +6,7 @@ function Education() {
     <section id="education" className="scroll-mt-16 px-6 py-10">
       <div className="mx-auto max-w-7xl">
         {/* Section heading */}
-        <div className="grid grid-cols-12 gap-8">
+        <div className="grid grid-cols-12 gap-x-4 gap-y-8 sm:gap-x-8">
           <Panel
             className="col-span-12 lg:col-start-3 lg:col-span-8"
             contentClassName="p-5 sm:p-6"
@@ -16,7 +16,7 @@ function Education() {
                 Education
               </p>
 
-              <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
+              <h2 className="mt-2 text-3xl font-pixel font-normal text-ink sm:text-4xl">
                 Academic background
               </h2>
 
@@ -35,7 +35,7 @@ function Education() {
           {education.map((item) => (
             <div
               key={`${item.school}-${item.degree}`}
-              className="grid grid-cols-12 gap-8"
+              className="grid grid-cols-12 gap-x-4 gap-y-8 sm:gap-x-8"
             >
               <Panel
                 variant="secondary"
@@ -51,7 +51,7 @@ function Education() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="text-lg font-bold text-ink sm:text-xl">
+                      <h3 className="text-xl font-pixel font-normal text-ink sm:text-2xl">
                         {item.degree}
                       </h3>
 

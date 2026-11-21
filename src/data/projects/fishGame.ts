@@ -7,7 +7,7 @@ export const fishGame: Project = {
   title: "Fish.exe",
 
   shortDescription:
-    "A Roblox collection game where players mutate fish and find endless combinations in search for rare combinations and high value fish.",
+    "A Roblox fish-collecting game with a mutation system that mixes visual traits like Fire, Freeze, and Rainbow across fish.",
 
   description:
     "A progression-based Roblox game centered around growing and collecting fish. " +
@@ -17,15 +17,15 @@ export const fishGame: Project = {
     "The game focuses on creating a relaxing collection loop while giving players reasons " +
     "to continue searching for unique and valuable mutation combinations.",
 
-  image: "/images/projects/fishgame/cover.png",
+  image: "/images/projects/fishgame/cover.webp",
 
   imageAlt: "fish.exe Roblox game showing a player's fish tank",
 
   gallery: [
-    "/images/projects/fishgame/pic1.png",
-    "/images/projects/fishgame/pic2.png",
-    "/images/projects/fishgame/pic3.png",
-    "/images/projects/fishgame/pic4.png",
+    "/images/projects/fishgame/pic1.webp",
+    "/images/projects/fishgame/pic2.webp",
+    "/images/projects/fishgame/pic3.webp",
+    "/images/projects/fishgame/pic4.webp",
   ],
 
   category: "Game",

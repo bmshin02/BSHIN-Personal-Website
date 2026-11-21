@@ -6,7 +6,7 @@ function Skills() {
     <section id="skills" className="scroll-mt-16 px-6 py-10">
       <div className="mx-auto max-w-7xl">
         {/* Section heading */}
-        <div className="grid grid-cols-12 gap-8">
+        <div className="grid grid-cols-12 gap-x-4 gap-y-8 sm:gap-x-8">
           <Panel
             className="col-span-12 lg:col-start-3 lg:col-span-8"
             contentClassName="p-5 sm:p-6"
@@ -16,7 +16,7 @@ function Skills() {
                 Skills
               </p>
 
-              <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">
+              <h2 className="mt-2 text-3xl font-pixel font-normal text-ink sm:text-4xl">
                 Technologies &amp; tools
               </h2>
 
@@ -31,7 +31,7 @@ function Skills() {
         </div>
 
         {/* Compact skill groups */}
-        <div className="ml-2 mt-6 grid grid-cols-12 gap-8">
+        <div className="ml-2 mt-6 grid grid-cols-12 gap-x-4 gap-y-8 sm:gap-x-8">
           <div
             className="
               col-span-12 grid gap-4
@@ -61,7 +61,7 @@ function Skills() {
                     "
                   />
 
-                  <h3 className="text-base font-bold text-ink sm:text-lg">
+                  <h3 className="text-lg font-pixel font-normal text-ink sm:text-xl">
                     {group.title}
                   </h3>
                 </div>
