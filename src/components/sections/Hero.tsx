@@ -461,11 +461,11 @@ function Hero() {
                       <div className="aspect-[4/3] overflow-hidden short:aspect-[16/10] xl:aspect-[4/3]!">
                         <img
                           src="/images/profile.webp"
-                          alt="Brandon Shin"
-                          width={400}
-                          height={400}
+                          alt="Brandon Shin smiling behind his laptop"
+                          width={800}
+                          height={600}
                           className="
-                            h-full w-full object-cover object-[center_20%]
+                            h-full w-full object-cover object-top
                             transition-transform duration-500
                             group-hover/photo:scale-[1.03]
                           "

@@ -70,7 +70,7 @@ export const portfolioWebsite: Project = {
   links: [
     {
       label: "Visit site",
-      url: "https://bmshin.vercel.app",
+      url: "https://www.bmshin.com",
     },
     {
       label: "View on GitHub",
