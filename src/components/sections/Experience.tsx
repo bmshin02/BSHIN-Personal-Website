@@ -368,7 +368,7 @@ function Experience() {
                                   rel="noopener noreferrer"
                                   className="
                                     rounded-lg border border-frame/20
-                                    bg-accent px-3 py-1.5
+                                    bg-accent px-3 py-2.5 sm:py-1.5
                                     text-xs font-bold text-accent-text
                                     shadow-soft-sm
                                     transition duration-150

@@ -267,7 +267,7 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                           aria-pressed={projectsView === "featured"}
                           className={`
                       rounded-lg border border-frame/20
-                      px-3 py-1.5
+                      px-3 py-2.5 sm:py-1.5
                       text-xs font-bold
                       shadow-soft-sm
                       transition duration-150
@@ -291,7 +291,7 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                           aria-pressed={projectsView === "all"}
                           className={`
                       rounded-lg border border-frame/20
-                      px-3 py-1.5
+                      px-3 py-2.5 sm:py-1.5
                       text-xs font-bold
                       shadow-soft-sm
                       transition duration-150
@@ -331,7 +331,7 @@ function Projects({ ref, onCaseStudyChange }: ProjectsProps) {
                                 aria-pressed={isActive}
                                 className={`
                             rounded-lg border border-frame/20
-                            px-3 py-1.5
+                            px-3 py-2.5 sm:py-1.5
                             text-xs font-bold
                             shadow-soft-sm
                             transition duration-150

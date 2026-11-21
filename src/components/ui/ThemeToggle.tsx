@@ -35,7 +35,7 @@ function ThemeToggle() {
       aria-label={isLightMode ? "Switch to dark mode" : "Switch to light mode"}
       title={isLightMode ? "Switch to dark mode" : "Switch to light mode"}
       className="
-        ml-auto flex h-9 w-9
+        ml-auto flex h-10 w-10 sm:h-9 sm:w-9
         items-center justify-center
         rounded-lg border border-frame/15
         bg-panel-secondary/70

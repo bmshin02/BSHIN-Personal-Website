@@ -46,6 +46,7 @@ const statusLines: { content?: ReactNode; wide?: boolean }[] = [
       <a
         href="#contact"
         className="
+          inline-block py-1
           text-[var(--term-prompt)] underline decoration-[var(--term-prompt)]/40
           underline-offset-[3px] transition-colors
           hover:text-[var(--term-ink)] hover:decoration-[var(--term-ink)]
@@ -394,7 +395,7 @@ function Hero() {
                               onFocus={() => setLinkCommand(link.command ?? "")}
                               onBlur={() => setLinkCommand("")}
                               className="
-                                flex h-9 items-center justify-center
+                                flex h-11 items-center justify-center md:h-9
                                 rounded-lg border border-[var(--term-line)]
                                 bg-[var(--term-bg)] text-[var(--term-prompt)]
                                 transition duration-150
@@ -478,7 +479,7 @@ function Hero() {
                 {/* Status window: what I'm looking for. Over the terminal's lower right on smaller screens, under the photo on wide ones. */}
                 <div
                   className={`
-                    relative -mt-6 order-last ml-auto w-[78%]
+                    relative mt-3 order-last ml-auto w-[78%]
                     md:absolute md:right-2 md:bottom-[3.75rem] md:mt-0 md:w-52
                     xl:relative xl:right-auto xl:bottom-auto xl:order-none xl:mt-3 xl:w-full
                     ${popIn(220).className}
@@ -549,7 +550,7 @@ function Hero() {
         {/* Bottom prompt */}
         <div
           className={`
-            flex justify-center pb-8
+            flex justify-center pb-8 max-md:hidden
             [@media(max-height:640px)]:hidden
             ${enter(800).className}
           `}

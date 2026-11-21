@@ -3,7 +3,7 @@ import {
   LuArrowUpRight,
   LuBot,
   LuBriefcase,
-  LuCode,
+  LuTrophy,
   LuGraduationCap,
   LuMusic,
   LuSearch,
@@ -46,23 +46,23 @@ const facts: Fact[] = [
     href: "#contact",
   },
   {
-    label: "Go-to stack",
-    value: "TypeScript and Python",
-    detail: "React, Next.js, PostgreSQL",
-    icon: LuCode,
-    href: "#skills",
+    label: "Featured",
+    value: "SignLingo at ZotHack",
+    detail: "Winner of Best Overall",
+    icon: LuTrophy,
+    href: "#projects",
   },
   {
     label: "What I build",
     value: "AI Agents, Apps, Games",
-    detail: "Plus AR/VR Classroom Apps",
+    detail: "Hackathon to Production",
     icon: LuBot,
     href: "#projects",
   },
   {
     label: "Off hours",
-    value: "Music Creation, Gym",
-    detail: "Pickleball, and I Love Games!",
+    value: "Music, Gym, Pickleball",
+    detail: "I Also Love Games!",
     icon: LuMusic,
   },
 ];
@@ -92,7 +92,7 @@ function About() {
             free time creating music and participating in hackathons.
           </p>
 
-          <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {facts.map(({ label, value, detail, icon: Icon, href, live }) => {
               const content = (
                 <>

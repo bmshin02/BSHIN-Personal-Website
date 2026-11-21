@@ -273,7 +273,7 @@ function Header({
             aria-label="Home"
             title="Home"
             className="
-              group flex h-9 w-9 shrink-0
+              group flex h-10 w-10 shrink-0 sm:h-9 sm:w-9
               items-center justify-center
               rounded-lg border border-frame/15
               bg-panel-secondary/70
@@ -370,7 +370,7 @@ function Header({
                 aria-controls="mobile-navigation"
                 aria-label={menuOpen ? "Close navigation" : "Open navigation"}
                 className="
-              group flex h-9 w-9 shrink-0
+              group flex h-10 w-10 shrink-0 sm:h-9 sm:w-9
               items-center justify-center
               rounded-lg border border-frame/15
               bg-panel-secondary/70
